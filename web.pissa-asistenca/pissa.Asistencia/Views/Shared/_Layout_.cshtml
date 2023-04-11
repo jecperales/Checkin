@@ -1,0 +1,244 @@
+﻿@*<!DOCTYPE html>
+    <html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>@ViewBag.Title - Mi aplicación ASP.NET</title>
+        @Styles.Render("~/Content/css")
+        @Scripts.Render("~/bundles/modernizr")
+    </head>
+    <body>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    @Html.ActionLink("Nombre de aplicación", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("Inicio", "Index", "Home")</li>
+                        <li>@Html.ActionLink("Acerca de", "About", "Home")</li>
+                        <li>@Html.ActionLink("Contacto", "Contact", "Home")</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="container body-content">
+            @RenderBody()
+            <hr />
+            <footer>
+                <p>&copy; @DateTime.Now.Year - Mi aplicación ASP.NET</p>
+            </footer>
+        </div>
+
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        @RenderSection("scripts", required: false)
+    </body>
+    </html>*@
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Asistencia</title>
+    <!-- loader-->
+    <link href="~/assets/css/pace.min.css" rel="stylesheet" />
+    <script src="~/assets/js/pace.min.js"></script>
+ 
+    <!-- Vector CSS -->
+    <link href="~/assets/plugins/vectormap/jquery-jvectormap-2.0.2.css" rel="stylesheet" />
+    <!-- simplebar CSS-->
+    <link href="~/assets/plugins/simplebar/css/simplebar.css" rel="stylesheet" />
+    <!-- Bootstrap core CSS-->
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- animate CSS-->
+    <link href="~/assets/css/animate.css" rel="stylesheet" type="text/css" />
+    <!-- Icons CSS-->
+    <link href="~/assets/css/icons.css" rel="stylesheet" type="text/css" />
+    <!-- Sidebar CSS-->
+    <link href="~/assets/css/sidebar-menu.css" rel="stylesheet" />
+    <!-- Custom Style-->
+    <link href="~/assets/css/app-style.css" rel="stylesheet" />
+
+</head>
+<body class="bg-theme bg-theme1">
+
+    <!-- Start wrapper-->
+    <div id="wrapper">
+
+        <!--Start sidebar-wrapper-->
+        <div id="sidebar-wrapper" data-simplebar="" data-simplebar-auto-hide="true">
+            <div class="brand-logo">
+                <a href="@Url.Action("Index","Asistencia")">
+                    @*<img src="~/imagen/logo_pissa_web.png" class="logo-icon" />*@
+                    <h5 class="logo-text">Grupo Pissa</h5>
+                </a>
+            </div>
+            <ul class="sidebar-menu do-nicescrol">
+                <li class="sidebar-header">Menu</li>
+                @{
+                    var permiso = ViewBag.profile;
+                    if (permiso == 2)
+                    {
+                        <li>
+                            <a href="@Url.Action("Index","Asistencia")">
+                                <i class="zmdi zmdi-view-dashboard"></i> <span>H. Asistencia</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("chekAsistencia","Asistencia")">
+                                <i class="zmdi zmdi-view-dashboard"></i> <span>R. Asistencia</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index","Perfil")">
+                                <i class="zmdi zmdi-face"></i> <span>Perfil</span>
+                            </a>
+                        </li>
+                    }
+                    if (permiso == 1)
+                    {
+                        <li>
+                            <a href="@Url.Action("Index","Asistencia")">
+                                <i class="zmdi zmdi-view-dashboard"></i> <span>H. Asistencia</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("chekAsistencia","Asistencia")">
+                                <i class="zmdi zmdi-view-dashboard"></i> <span>R. Asistencia</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="@Url.Action("altapersonal","Asistencia")">
+                                <i class="zmdi zmdi-view-dashboard"></i> <span>Alta personal</span>
+                            </a>
+                        </li>
+
+
+
+                        <li>
+                            <a href="@Url.Action("Index","Perfil")">
+                                <i class="zmdi zmdi-face"></i> <span>Perfil</span>
+                            </a>
+                        </li>
+                    }
+                }
+
+            </ul>
+
+        </div>
+        <!--End sidebar-wrapper-->
+        <!--Start topbar header-->
+        <header class="topbar-nav">
+            <nav class="navbar navbar-expand fixed-top">
+                <ul class="navbar-nav mr-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link toggle-menu" href="javascript:void();">
+                            <i class="icon-menu menu-icon"></i>
+                        </a>
+                    </li>
+
+                </ul>
+
+                <ul class="navbar-nav align-items-center right-nav-link">
+
+
+                    <li class="nav-item">
+                        <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" data-toggle="dropdown" href="#">
+                            <span class="user-profile">
+                            <img src="~/imagen/profile-pic.jpg" class="img-circle" />
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li class="dropdown-item user-details">
+                                <a href="javaScript:void();">
+                                    <div class="media">
+                                        <div class="avatar">
+                                            <img class="align-self-start mr-3" src="~/imagen/profile-pic.jpg" class="img-circle" />
+                                        </div>
+                                        <div class="media-body">
+                                            @{
+                                                var nombre = Session["nombre"] == null ? null : Session["nombre"].ToString();
+                                                <h6 class="mt-2 user-title">@nombre</h6>
+                                            }
+
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li class="dropdown-divider"></li>
+                            <li class="dropdown-item">
+                            <i class="icon-power mr-2"></i>
+                            <a href="@Url.Action("salir","Acount")">Salir</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+        <!--End topbar header-->
+        <div class="clearfix"></div>
+
+        <div class="content-wrapper">
+            <div class="container-fluid">
+                <!--Start Dashboard Content-->
+                @RenderBody()
+                <!--End Dashboard Content-->
+                <!--start overlay-->
+                <div class="overlay toggle-menu"></div>
+                <!--end overlay-->
+
+            </div>
+            <!-- End container-fluid-->
+
+        </div><!--End content-wrapper-->
+        <!--Start Back To Top Button-->
+        <a href="javaScript:void();" class="back-to-top"><i class="fa fa-angle-double-up"></i> </a>
+        <!--End Back To Top Button-->
+        <!--Start footer-->
+        <footer class="footer">
+            <div class="container">
+                <div class="text-center">
+                </div>
+            </div>
+        </footer>
+        <!--End footer-->
+
+    </div><!--End wrapper-->
+    <!-- Bootstrap core JavaScript-->
+    <script src="~/assets/js/jquery.min.js"></script>
+    <script src="~/assets/js/popper.min.js"></script>
+    <script src="~/assets/js/bootstrap.min.js"></script>
+
+    <!-- simplebar js -->
+    <script src="~/assets/plugins/simplebar/js/simplebar.js"></script>
+    <!-- sidebar-menu js -->
+    <script src="~/assets/js/sidebar-menu.js"></script>
+    <!-- loader scripts -->
+    <script src="~/assets/js/jquery.loading-indicator.js"></script>
+    <!-- Custom scripts -->
+    <script src="~/assets/js/app-script.js"></script>
+    <!-- Chart js -->
+
+    @*<script src="~/assets/plugins/Chart.js/Chart.min.js"></script>*@
+
+    <!-- Index js -->
+    <script src="~/assets/js/index.js"></script>
+
+</body>
+</html>
+
+
+

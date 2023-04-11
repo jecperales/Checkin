@@ -1,0 +1,77 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
+<div class="container-fluid" ng-app="myApp" ng-controller="myCtrl">
+    <div class="row">
+        <div class="col-md-2">
+            <label>Nombre</label>
+            <input type="text" class="form-control" name="name" ng-model="nombre" disabled value="" />
+        </div>
+        <div class="col-md-2">
+            <label>Apellido paterno</label>
+            <input type="text" class="form-control" name="name" ng-model="appaterno" disabled value="" />
+        </div>
+        <div class="col-md-2">
+            <label>Apellido materno</label>
+            <input type="text" class="form-control" name="name" ng-model="apmaterno" disabled value="" />
+        </div>
+        <div class="col-md-3">
+            <label>IMEI</label>
+            <input type="text" class="form-control" name="name" maxlength="15" ng-model="emmei" value="" />
+        </div>
+        <div class="col-md-2">
+            <label>Contraseña</label>
+            <input type="text" class="form-control" name="name" ng-model="psw" value="" />
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-2">
+            <button class="btn btn-success" ng-click="actualizaDatos()">
+                <i class="fa fa-save"> Actualizar</i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+        var app = angular.module('myApp', []);
+        app.controller('myCtrl', function ($scope, $http) {
+
+            $scope.nombre = '';
+            $scope.appaterno = '';
+            $scope.apmaterno = '';
+            $scope.emmei = '';
+            $scope.psw = '';
+
+            var datos = JSON.parse('@Html.Raw(ViewBag.misdatos)');
+            
+
+            $scope.nombre = datos.nombre;
+            $scope.appaterno=datos.appaterno;
+            $scope.apmaterno= datos.apmaterno;
+            $scope.emmei= datos.emei;
+            $scope.psw = datos.psw;
+
+
+            $scope.actualizaDatos = function () {
+                $scope.modpersonal = {
+                    emei: $scope.emmei,psw: $scope.psw 
+                }
+                var param = JSON.stringify($scope.modpersonal);
+                $http.post('@Url.Action("modificar_perfil", "Perfil")', param, { headers: { 'Content-Type': 'application/json' } })
+                    .then(function (response) {
+                            if (response.data) {
+                                swal("Correcto.", "Perfil modificado", "success");
+                             
+                            }
+                        });
+            }
+
+
+        });
+</script>

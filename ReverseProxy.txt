@@ -1,0 +1,6 @@
+
+URL para acceder a la api desde fuera del servidor
+http://189.203.240.97/api-asistencia-revp/api/
+http://189.203.240.97/api-asistencia-revp/api/Ingeniero
+
+

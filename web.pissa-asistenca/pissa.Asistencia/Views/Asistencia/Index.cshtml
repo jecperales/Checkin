@@ -1,0 +1,341 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+@using pissa.Asistencia.Models;
+@model tipoProyecto
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
+
+<script src="~/vendor/jquery/jquery.min.js"></script>
+<script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="~/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+@*<link href="~/vendor/select2/dist/css/select2.min.css" rel="stylesheet" />*@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+@*<script src="~/js/select2.min.js"></script>*@
+<script src="~/vendor/select2/dist/js/select2.min.js"></script>
+<script src="~/Scripts/sweetalert.min.js"></script>
+
+
+
+
+<style>
+    #id {
+        background-color: rgba(255, 255, 255, 0.2);
+        border: #000000;
+        color: black;
+        width: 130px;
+        height: 34px;
+    }
+
+    #id_ms {
+        /*background: #ff0000;*/
+        background-color: rgba(255, 255, 255, 0.2);
+        border: #000000;
+        color: black;
+        width: 130px;
+        height: 34px;
+    }
+
+    .ultraselect
+    .options {
+        background-color: #5fa7e0;
+    }
+</style>
+
+<div class="container-fluid" id="bloquear" ng-app="myApp" ng-controller="myCtrl">
+    <div class="row">
+        <div class="col-md-12">
+            @{
+                var valor = ViewBag.selectProyecto;
+                if (valor == 0)
+                {
+                    <label>CONFIRMAR PROYECTO</label>
+
+                    @Html.DropDownListFor(m => m.id, (List<SelectListItem>)ViewBag.tipo, "Seleccione proyecto")
+                    <br />
+                    <button class="btn btn-success" onclick="actualizaProy()">
+                        <i class="fa fa-save"> Registrar</i>
+                    </button>
+                    }
+                    else
+                    { 
+        <div class="row">
+            <div class="col-md-3">
+                <label>Fecha inicio</label>
+                <input type="date" id="fecha1" class="form-control" name="name" value="" />
+            </div>
+            <div class="col-md-3">
+                <label>Fecha fin</label>
+                <input type="date" id="fecha2" class="form-control" name="name" value="" />
+            </div>
+
+            @{ 
+                var ses2 = int.Parse(Session["Profile"].ToString());
+                if (ses2 != 2)
+                {
+                    <div class="col-md-2">
+                        <label>Proyecto</label>
+                        <select ng-model="selectDatos" class="form-control select" name="states[]" id="select2Multiple">
+                            <option value="">Todos</option>
+                            <option ng-repeat="d in Tdatos" title="{{d.Text}}" value="{{d.Value}}">{{d.Text}}</option>
+                        </select>
+
+                    </div>
+                    
+                }
+            }
+           
+            <div class="col-md-2" style="text-align:center;">
+                <br />
+                <button class="btn btn-info" ng-click="busca_asistencia()">
+                    <i class="fa fa-search"> Buscar</i>
+                </button>
+            </div>
+
+            @{ var ses = int.Parse(Session["Profile"].ToString());
+            
+                if (ses == 1 || ses == 3)
+                {
+                    <div class="col-md-2">
+                        <br />
+                        <button class="btn btn-info" ng-click="DescargarExcel()">
+                            <i class="fa fa-file-excel-o"> Descargar</i>
+                        </button>
+                    </div> 
+                } 
+            }
+        </div>
+                    <br />
+                    <div class="row">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Fecha</th>
+                                        <th>Hora de entrada</th>
+                                        <th>Coordenadas de entrada</th>
+                                        <th>Hora de salida</th>
+                                        <th>Coordenadas de salida</th>
+                                        <th>Area</th>
+                                        <th>Pais</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="d in Tasistencia">
+                                        <td>{{d.Nombre | uppercase}} {{d.last_name_p | uppercase}} {{d.last_name_m | uppercase}}</td>
+                                        <td>{{d.fecha_hora_registro}}</td>
+                                        <td>{{d.hora_entrada}}</td>
+                                        <td><a ng-href="http://maps.google.com/maps?z=12&t=m&q=loc:{{d.latitud}}+{{d.longitud}}" target="external">Ver ubicacion</a></td>
+                                        <td>{{d.hora_salida}}</td>
+                                        <td><a ng-if="d.s_latitud != 0" ng-href="http://maps.google.com/maps?z=12&t=m&q=loc:{{d.s_latitud}}+{{d.s_longitud}}" target="external">Ver ubicacion</a></td>
+                                        <td>{{d.Area}}</td>
+                                        <td>{{d.pais}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                            }
+            }
+        </div>
+    </div>
+    <input id="profile" style="display:none" value="@ViewBag.profile">      
+    <input id="pais-reporte" style="display:none" value="@ViewBag.pais_reporte">        
+</div>
+
+
+<script>
+    $(document).ready(function () {
+
+        $(document).bind("contextmenu", function (e) {
+            return false;
+        });
+
+        $("#bloquear").on('paste', function (e) {
+            e.preventDefault();
+            //alert('Esta acción está prohibida');
+        });
+
+        $("#bloquear").on('copy', function (e) {
+            e.preventDefault();
+            //alert('Esta acción está prohibida');
+        });
+
+        $('.select2Multiple').select2();
+        
+    })
+    
+</script>
+
+
+<script>
+
+    function actualizaProy() {
+
+        var id = $('#id').val();
+        var id_proyecto = {
+            id_proyecto: id
+        };
+
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            type: 'POST',
+            url: '@Url.Action("actualizaproyecto", "Asistencia")',
+            data: id_proyecto,
+            success: function () {
+                window.location.reload();
+            },
+            failure: function (response) {
+
+            }
+        });
+    } 
+
+</script>
+
+<script>
+
+    var app = angular.module('myApp', []);
+    app.controller('myCtrl', function ($scope, $http) {
+
+        $scope.Tasistencia = [];
+
+        $scope.fecha_inicio = '@Html.Raw(ViewBag.fecha_inicio)';
+        $scope.fecha_fin = '@Html.Raw(ViewBag.fecha_fin)';
+        document.getElementById('fecha1').value = $scope.fecha_inicio;
+        document.getElementById('fecha2').value = $scope.fecha_fin;
+
+        $scope.Tdatos = [];
+        $scope.Tdatos = JSON.parse('@Html.Raw(ViewBag.tipo)');
+        $scope.selectDatos = '';
+
+        $scope.DescargarExcel = function ()
+        {
+            var id = $('#select2Multiple').val();
+            var lisProy = [];
+            var cade = 0;
+            cade += parseInt(id[0]);
+            for (var pos = 0; pos < id.length; pos++) {
+                lisProy.push(parseInt(id[pos]));
+                cade += ',' + parseInt(id[pos]);
+            }
+            cade = id;
+
+
+            var filtro = {
+                profile: document.getElementById('profile').value,
+                fecha1: $('#fecha1').val(),
+                fecha2: $('#fecha2').val(),
+                proyectos: $('#select2Multiple').val(),
+                paisReporte: document.getElementById('pais-reporte').value
+            }
+
+            var param = JSON.stringify(filtro);
+            console.log(param);
+
+            if (!!filtro.fecha1 == false) {
+                swal("Datos incorrectos", "Debes ingresar una fecha de incio!!!", "warning");
+                $('#fecha1').focus();
+                return;
+            }
+
+            if (!!filtro.fecha2 == false) {
+                swal("Datos incorrectos", "Debes ingresar una fecha de fin!!!", "warning");
+                $('#fecha2').focus();
+                return;
+            }
+
+            if (filtro.fecha1 > filtro.fecha2) {
+                swal("Datos incorrectos", "La fecha de inicio no puede ser mayor a la fecha de fin", "warning");
+                $('#fecha1').focus();
+                return;
+            }
+
+            var url = '@Url.Action("exporta_excel_asistencias", "Asistencia")?fecha1=' + $('#fecha1').val() + '&fecha2=' + $('#fecha2').val() + '&cade=' + cade + '&paisReporte=' + filtro.paisReporte;
+           
+            @*$http.post('@Url.Action("exporta_excel_asistencias", "Asistencia")', param, { headers: { 'Content-Type': 'application/json' } })
+                .then(function (response) {
+                    if (response.data.length > 0) {
+                        $scope.Tasistencia = [];
+                        $scope.Tasistencia = response.data;
+                        swal("Descarga de reporte", "Reporte generado con exito", "success");
+                    }
+                    else
+                    {
+                        swal("Descarga de reporte", "No hay datos para el rango de fecha especificados", "info")
+                    }
+
+                })
+                .catch(function (err) {
+                    swal("Error Exception.", "Ocurrio un error en la aplicacion por favor contacte a su administrador!.", "error")
+                });*@
+
+
+
+            window.open(url, '_newtab', '');
+
+        }
+
+        $scope.datSelect = '';
+
+        $scope.busca_asistencia = function () {
+
+            var filtro = {
+                profile: document.getElementById('profile').value,
+                fecha1: $('#fecha1').val(),
+                fecha2: $('#fecha2').val(),
+                proyectos: $('#select2Multiple').val(),
+                paisReporte: document.getElementById('pais-reporte').value
+            }
+
+            var param = JSON.stringify(filtro);
+            console.log(param);
+
+            if (!!filtro.fecha1 == false)
+            {
+                swal("Datos incorrectos", "Debes ingresar una fecha de incio!!!", "warning");
+                $('#fecha1').focus();
+                return;
+            }
+
+            if (!!filtro.fecha2 == false)
+            {
+                swal("Datos incorrectos", "Debes ingresar una fecha de fin!!!", "warning");
+                $('#fecha2').focus();
+                return;
+            }
+
+            if (filtro.fecha1 > filtro.fecha2)
+            {
+                swal("Datos incorrectos", "La fecha de inicio no puede ser mayor a la fecha de fin", "warning");
+                $('#fecha1').focus();
+                return;
+            }
+
+            $http.post('@Url.Action("generaAsistencias", "Asistencia")', param, { headers: { 'Content-Type': 'application/json' } })
+                .then(function (response) {
+                    if (response.data.length > 0) {
+                        $scope.Tasistencia = [];
+                        $scope.Tasistencia = response.data;
+                    }
+                    else
+                    {
+                        swal("Reporte de asistencia", "No hay datos para el rango de fecha especificados", "info")
+                    }
+
+                })
+                .catch(function (err) {
+                    swal("Error Exception.", "Ocurrio un error en la aplicacion por favor contacte a su administrador!.", "error")
+                });
+        }
+
+
+        //BUSCAMOS LAS ASISTENCIAS DEL MES ACTUAL
+        $scope.busca_asistencia();
+    });
+</script>
+

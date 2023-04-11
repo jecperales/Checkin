@@ -1,0 +1,83 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <!-- <ion-title>login</ion-title> -->
+  </ion-toolbar>
+
+  <ion-buttons slot="start">
+    <ion-back-button defaultHref="login" text=""></ion-back-button>
+  </ion-buttons>
+</ion-header>
+
+<ion-content>  
+  <ion-card class="ion-no-margin">
+    <!-- BACKGROUND IMAGE -->
+    <ion-img src="assets/images/header1.png"></ion-img>
+    <!-- BACKGROUND IMAGE -->
+
+    <ion-card-content>
+      <!-- LOGIN FORM -->
+      <div class="wrapform">
+        <ion-item>
+          <ion-icon name="mail-outline"></ion-icon>
+          <ion-input
+            name="uid"
+            type="text"
+            [(ngModel)]="uid"
+            placeholder="User"
+            required
+          ></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-icon name="lock-closed-outline"></ion-icon>
+          <ion-input
+            name="password"
+            type="password"
+            [(ngModel)]="password"
+            placeholder="***********"
+            required
+          ></ion-input>
+        </ion-item>
+      </div>
+
+      <div class="password_forgot">
+        <ion-button fill="clear" class="ion-no-padding"
+          >Olvidé mi contraseña</ion-button
+        >
+      </div>
+
+      <div class="sign-btn-wrap">
+        <ion-button shape="round" fill="solid" class="sign-btn" (click)="login(this.uid, this.password)">
+          Login
+        </ion-button>
+      </div>
+      <!-- LOGIN FORM -->
+
+      <!-- SOCIAL MEDIA -->
+      <div class="social-btns">
+        <span class="text-tag">Social Media</span>
+      </div>
+
+      <div class="social-btns">
+        <ion-button fill="clear" class="facebookbtn ion-no-padding">
+          <ion-img src="assets/images/facebook.png"></ion-img>
+        </ion-button>
+
+        <ion-button fill="clear" class="googlebtn ion-no-padding">
+          <ion-img src="assets/images/google.png"></ion-img>
+        </ion-button>
+
+        <ion-button fill="clear" class="applebtn ion-no-padding">
+          <ion-img src="assets/images/apple.png"></ion-img>
+        </ion-button>
+      </div>
+      <!-- SOCIAL MEDIA -->
+    </ion-card-content>
+
+  </ion-card>
+
+</ion-content>
+
+<div class="ion-card-footer">
+  <span>No tienes una cuenta?</span> <button class="ion-no-padding">Solicitala aqui</button> 
+</div>

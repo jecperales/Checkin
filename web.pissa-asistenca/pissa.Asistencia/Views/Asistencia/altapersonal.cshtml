@@ -1,0 +1,398 @@
+﻿@{ ViewBag.Title = "altapersonal"; }
+@using pissa.Asistencia.Models;
+@model tipoProyecto
+@*@model Modelos*@
+
+
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Scripts/sweetalert.min.js"></script>
+<script src="~/Scripts/angular1_6_1.js"></script>
+<script src="~/Scripts/ui-bootstrap-tpls-3.0.3.min.js"></script>
+
+
+<div class="container-fluid" ng-app="myApp" ng-controller="myCtrl">
+    <div class="row">
+        <div class="col-md-3">
+            <label for="" class="">Nombre</label>
+            <input class="form-control" ng-model="nombre" id="nombre" />
+        </div>
+        <div class="col-md-3">
+            <label for="" class="">Apellido paterno</label>
+            <input class="form-control" ng-model="ap_paterno" />
+        </div>
+        <div class="col-md-3">
+            <label for="" class="">Apellido materno</label>
+            <input class="form-control" ng-model="ap_materno" />
+        </div>
+        <div class="col-md-2">
+            <label for="" class="">Celular</label>
+            <input class="form-control" maxlength="10" id="celular" ng-model="celular" />
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-2">
+            <label for="" class="">Usuario</label>
+            <input class="form-control" ng-model="usuario" />
+        </div>
+        <div class="col-md-2">
+            <label for="" class="">Contraseña</label>
+            <input class="form-control" ng-model="psw" />
+        </div>
+        <div class="col-md-2">
+            <label for="" class="">Area</label>
+            @*@Html.DropDownListFor(m => m.id, (List<SelectListItem>)ViewBag.tipo, "Seleccione proyecto", new { @class = "form-control small" })*@
+            <select ng-model="selectArea" class="form-control" ng-options="a.label for a in TArea"></select>
+        </div>
+        <div class="col-md-2" style="display:none">
+            <label for="" class=""># Imei</label>
+            <input class="form-control" maxlength="15" ng-model="emei" />
+        </div>
+        <div class="col-md-2" style="display:none">
+            <label for="" class="">Modelo de Telefono</label>
+            @*@Html.DropDownListFor(m => m.label, (List<SelectListItem>)ViewBag.marcatelefono, "Seleccione telefono", new { @class = "form-control small" })*@
+            <select ng-model="selectTelefono" class="form-control" ng-options="a.label for a in Ttelefono"></select>
+        </div>
+
+        <div class="col-md-2">
+            <label>País</label>
+            <select ng-model="selectCountry" class="form-control" ng-options="a.name for a in Tcountry">
+                @*<option value="" selected disabled>Selecciona un pais</option>*@
+            </select>
+        </div>
+
+
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-2">
+            <br />
+            <button class="btn btn-success" ng-click="limpear()">
+                <i class="fa fa-trash-o"> Limpiar</i>
+            </button>
+        </div>
+        <div class="col-md-2" ng-if="bool_modifica==false">
+            <br />
+            <button class="btn btn-success" ng-click="registrar()">
+                <i class="fa fa-save"> Registrar</i>
+            </button>
+        </div>
+        <div class="col-md-2" ng-if="bool_modifica==true">
+            <br />
+            <button class="btn btn-success" ng-click="modificar()">
+                <i class="fa fa-save"> Modificar</i>
+            </button>
+        </div>
+    </div>
+    <br />
+    <br />
+    <div class="row">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Apellido paterno</th>
+                        <th>Apellido materno</th>
+                        <th>Celular</th>
+                        <th style="display:none">Emei</th>
+                        <th>País</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="d in Tusuario">
+                        <td>{{d.nombre}}</td>
+                        <td>{{d.appaterno}}</td>
+                        <td>{{d.apmaterno}}</td>
+                        <td>{{d.telefono}}</td>
+                        <td style="display:none">{{d.imei}}</td>
+                        <td>{{d.pais}}</td>
+                        <td>
+                            <div style="float:left;width:35px;"><i class="fa fa-edit" title="Editar" ng-click="editar(d)"></i></div>
+                            <div style="float:left;width:35px;"><i class="fa fa-trash-o" title="Eliminar"></i></div>
+                        </td>
+                        <td style="visibility: hidden">{{d.id_mov}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="text-align: center">
+                <ul uib-pagination total-items="totalCount" ng-model="pageIndex" ng-change="pageChanged()" items-per-page="pageSizeSelected" direction-links="true" max-size="maxSize" class="pagination" boundary-links="true" rotate="false" num-pages="numPages"></ul>
+            </div>
+        </div>
+    </div>
+    <br />
+    @*<div class="row">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Apellido paterno</th>
+                            <th>Apellido materno</th>
+                            <th>Celular</th>
+                            <th>Emei</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.IndexViewModel.movAsistencia)
+                        {
+                        <tr>
+
+                            <td>@item.nombre</td>
+                            <td>@item.appaterno</td>
+                            <td>@item.apmaterno</td>
+                            <td>@item.celular</td>
+                            <td>@item.imei</td>
+                            <td></td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+                @{ Html.RenderPartial("_paginador", Model);}
+            </div>
+        </div>*@
+</div>
+
+<script>
+    var app = angular.module('myApp', ['ui.bootstrap']);
+    app.controller('myCtrl', function ($scope, $http) {
+
+        $scope.nombre = '';
+        $scope.ap_paterno = '';
+        $scope.ap_materno = '';
+        $scope.celular = '';
+        $scope.usuario = '';
+        $scope.psw = '';
+        $scope.emei = '';
+        $scope.id_mov = 0;
+        $scope.bool_modifica = false;
+        $scope.TArea = [];
+        $scope.selectArea = '';
+        $scope.Ttelefono = [];
+        $scope.selectTelefono = '';
+        $scope.Tcountry = [];
+        $scope.selectCountry = '';
+
+        $scope.totalCount = 0;
+        $scope.pageIndex = 1;
+        $scope.pageSizeSelected = 8;
+
+        $scope.Tusuario = [];
+        $scope.tmId = 0;
+        $scope.tperf = 0;
+
+        $scope.TArea = JSON.parse('@Html.Raw(ViewBag.tipo)');
+        $scope.Ttelefono = JSON.parse('@Html.Raw(ViewBag.marcatelefono)');
+        $scope.Tcountry = JSON.parse('@Html.Raw(ViewBag.country)')
+
+
+        $scope.editar = function (d) {
+
+            $scope.tmId = d.id_ingeniero;
+            $scope.tperf = d.id_perfil;
+            $scope.bool_modifica = true;
+            $scope.nombre = d.nombre;
+            $scope.ap_paterno = d.appaterno;
+            $scope.ap_materno = d.apmaterno;
+            $scope.celular = d.telefono;
+            $scope.id_mov = d.id_mov;
+            $scope.usuario = d.user;
+            $scope.psw = d.psw;
+            $scope.emei = d.imei;
+            if (d.imei != null)
+            {
+                $scope.selectTelefono = $scope.Ttelefono.find(x => x.label == d.marca_telefono.toUpperCase());
+            }
+            $scope.selectCountry = $scope.Tcountry.find(x => x.name == d.pais);
+
+            $scope.selectArea = $scope.TArea.find(x => x.label == d.area);
+
+
+        }
+
+        $scope.getEmployeeList = function () {
+            $http.post('@Url.Action("paginado_personal", "Asistencia")?pageIndex=' + $scope.pageIndex + "&pageSize=" + $scope.pageSizeSelected)
+            .then(
+                function (response) {
+                    $scope.Tusuario = [];
+                    $scope.Tusuario = response.data.Lista;
+                    $scope.totalCount = response.data.Total;
+                },
+                function (err) {
+                    var error = err;
+                }
+            );
+        };
+
+
+        $scope.getEmployeeList();
+
+        $scope.pageChanged = function () {
+            $scope.getEmployeeList();
+        };
+
+
+        $scope.changePageSize = function () {
+            $scope.pageIndex = 1;
+            $scope.getEmployeeList();
+        };
+
+
+        $scope.modificar = function () {
+
+            if ($scope.validaDatos())
+            {
+                if ($scope.selectTelefono == undefined)
+                {
+                    swal("Datos incorrectos", "El modelo de telefono no puede estar vacio. Por favor selecciona una opcion", "info");
+                    return;
+                }
+
+                if ($scope.selectCountry == undefined)
+                {
+                    swal("Datos incorrectos", "El pais no puede estar vacio. Por favor selecciona una opcion", "info");
+                    return;
+                }
+
+
+                $scope.reg = {
+                    id_ingeniero: $scope.tmId,
+                    name: $scope.nombre,
+                    last_name_p: $scope.ap_paterno,
+                    last_name_m: $scope.ap_materno,
+                    cell_phone: $scope.celular,
+                    user: $scope.usuario,
+                    password: $scope.psw,
+                    pais: $scope.selectCountry == undefined ? null : $scope.selectCountry.name,
+                    id_profile: $scope.tperf,
+                    id_proyecto: $scope.selectArea.id
+                };
+
+                $scope.tele = {
+                    id_movil : $scope.id_mov,
+                    no_imei: $scope.emei,
+                    modelo: $scope.selectTelefono.label
+                };
+
+                $scope.altapersonal = {
+                    ing: $scope.reg,
+                    mov: $scope.tele
+                }
+
+                var param = JSON.stringify($scope.altapersonal);
+                    $http.post('@Url.Action("registra_personal", "Asistencia")', param, { headers: { 'Content-Type': 'application/json' } })
+                    .then(function (response) {
+                        if (response.data) {
+                            $scope.getEmployeeList();
+                            swal("Correcto.", "Personal registrado", "success");
+                            $scope.limpear();
+                        }
+                    });
+            }
+        }
+
+        $scope.registrar = function () {
+
+            if ($scope.validaDatos())
+            {
+                $scope.reg = {
+                id_ingeniero: 0,
+                name: $scope.nombre,
+                last_name_p: $scope.ap_paterno,
+                last_name_m: $scope.ap_materno,
+                cell_phone: $scope.celular,
+                user: $scope.usuario,
+                password: $scope.psw,
+                pais: $scope.selectCountry == undefined ? null : $scope.selectCountry.name,
+                id_profile: 2,
+                id_proyecto: $scope.selectArea.id
+                };
+
+                $scope.tele = {
+                    id_movil: 0,
+                    no_imei: $scope.emei,
+                    modelo: $scope.selectTelefono.label
+                };
+
+                $scope.altapersonal = {
+                    ing: $scope.reg,
+                    mov: $scope.tele
+                }
+
+                console.log($scope.altapersonal);
+
+                var param = JSON.stringify($scope.altapersonal);
+                    $http.post('@Url.Action("registra_personal", "Asistencia")', param, { headers: { 'Content-Type': 'application/json' } })
+                    .then(function (response) {
+                        if (response.data) {
+                            $scope.getEmployeeList();
+                            swal("Correcto.", "Personal registrado", "success");
+                            $scope.limpear();
+                        }
+                    });
+            }
+        }
+
+        $scope.validaDatos = function()
+        {
+            var result = true;
+
+            if ($scope.nombre == undefined || $scope.nombre == "")
+            {
+                swal("Datos incompletos", "Debes ingresar un nombre.", "info");
+                result = false;
+            }
+
+            if ($scope.ap_paterno == undefined || $scope.ap_paterno == "") {
+                swal("Datos incompletos", "Debes ingresar un apellido paterno.", "info");
+                result = false;
+            }
+
+            if ($scope.usuario == undefined || $scope.usuario=="")
+            {
+                swal("Datos incompletos", "Debes ingresar un usuario.", "info");
+                result = false;
+            }
+
+            if ($scope.psw == undefined || $scope.psw=="") {
+                swal("Datos incompletos", "Debes ingresar una contraseña.", "info");
+                result = false;
+            }
+
+
+            if ($scope.selectArea == undefined || $scope.selectArea == "") {
+                swal("Datos incompletos", "Debes ingresar un área.", "info");
+                result = false;
+            }
+
+            if ($scope.selectCountry == undefined || $scope.selectCountry == "")
+            {
+                swal("Datos incompletos", "Debes ingresar un país", "info");
+                result = false;
+            }
+
+            return result;
+        }
+
+        $scope.limpear = function () {
+            $scope.bool_modifica = false;
+            $scope.nombre = '';
+            $scope.ap_paterno = '';
+            $scope.ap_materno = '';
+            $scope.celular = '';
+            $scope.usuario = '';
+            $scope.psw = '';
+            $scope.emei = '';
+            $scope.tmId = 0;
+            $scope.tperf = 0;
+            $scope.selectCountry = '';
+            $scope.selectArea = '';
+            $scope.selectTelefono = '';
+            document.getElementById('nombre').focus();
+
+        }
+    });
+
+</script>
