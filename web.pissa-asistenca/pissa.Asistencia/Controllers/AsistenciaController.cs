@@ -5,6 +5,7 @@ using pissa.Asistencia.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -345,11 +346,12 @@ namespace pissa.Asistencia.Controllers
             {
                 nombre = a.Nombre + " " + a.last_name_p + " " + a.last_name_m;
                 fecha = a.fecha_hora_registro.Substring(0, 10);
-                hora = a.fecha_hora_registro.Substring(11, 14);
+                hora = Convert.ToDateTime(a.fecha_hora_registro).ToString("HH:mm:ss");
                 
                 fecha_s = Convert.ToDateTime(a.fecha_hora_salida) < DateTime.Parse("01/01/1900") ? "No hay registro" : a.fecha_hora_salida.Substring(0, 10);
-                hora_s = Convert.ToDateTime(a.fecha_hora_salida) < DateTime.Parse("01/01/1900") ? "No hay registro" : a.fecha_hora_salida.Substring(11, 14);
-                
+                //hora_s = Convert.ToDateTime(a.fecha_hora_salida) < DateTime.Parse("01/01/1900") ? "No hay registro" : a.fecha_hora_salida.Substring(11, 14);
+                hora_s = Convert.ToDateTime(a.fecha_hora_salida) < DateTime.Parse("01/01/1900") ? "No hay registro" : Convert.ToDateTime(a.fecha_hora_salida).ToString("HH:mm:ss");
+
                 link_e = "http://maps.google.com/maps?z=12&t=m&q=loc:" + a.latitud.ToString() + "+" + a.longitud.ToString();
 
                 if (a.s_latitud > 0)
@@ -364,16 +366,16 @@ namespace pissa.Asistencia.Controllers
                 ws.Cell(row, col).Value = a.Nombre + " " + a.last_name_p + " " + a.last_name_m ;
                 ws.Cell(row, ++col).Value = fecha;
 
-                ws.Cell(row, ++col).SetDataType(XLDataType.DateTime);                              
+                ws.Cell(row, ++col).SetDataType(XLDataType.TimeSpan);                              
                 ws.Cell(row, col).Style.DateFormat.Format = "HH:mm:ss";
-                ws.Cell(row, col).Value = hora;
+                ws.Cell(row, col).SetValue(hora);
 
-                ws.Cell(row, ++col).Value = "Ver ubicación";
+                ws.Cell(row, ++col).Value = a.latitud.ToString() + " , " + a.longitud.ToString();
                 ws.Cell(row, col).Hyperlink = new XLHyperlink(link_e);
 
-                ws.Cell(row, ++col).SetDataType(XLDataType.DateTime);
-                ws.Cell(row, col).Style.DateFormat.Format = "HH:mm:ss";
-                ws.Cell(row, col).Value = hora_s;
+                ws.Cell(row, ++col).SetDataType(XLDataType.TimeSpan);
+                ws.Cell(row, col).Style.DateFormat.Format = "HH:mm:ss";                
+                ws.Cell(row, col).SetValue(hora_s);
 
                 if (String.IsNullOrEmpty(link_s))
                 {
@@ -381,7 +383,7 @@ namespace pissa.Asistencia.Controllers
                 }
                 else
                 {
-                    ws.Cell(row, ++col).Value = "Ver ubicación";
+                    ws.Cell(row, ++col).Value = a.s_latitud.ToString() + " , " + a.s_longitud.ToString();
                     ws.Cell(row, col).Hyperlink = new XLHyperlink(link_s);
                 }
 

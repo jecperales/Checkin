@@ -128,9 +128,9 @@
                                         <td>{{d.Nombre | uppercase}} {{d.last_name_p | uppercase}} {{d.last_name_m | uppercase}}</td>
                                         <td>{{d.fecha_hora_registro}}</td>
                                         <td>{{d.hora_entrada}}</td>
-                                        <td><a ng-href="http://maps.google.com/maps?z=12&t=m&q=loc:{{d.latitud}}+{{d.longitud}}" target="external">Ver ubicacion</a></td>
+                                        <td><a ng-href="http://maps.google.com/maps?z=12&t=m&q=loc:{{d.latitud}}+{{d.longitud}}" target="external">{{d.latitud}} , {{d.longitud}}</a></td>
                                         <td>{{d.hora_salida}}</td>
-                                        <td><a ng-if="d.s_latitud != 0" ng-href="http://maps.google.com/maps?z=12&t=m&q=loc:{{d.s_latitud}}+{{d.s_longitud}}" target="external">Ver ubicacion</a></td>
+                                        <td><a ng-if="d.s_latitud != 0" ng-href="http://maps.google.com/maps?z=12&t=m&q=loc:{{d.s_latitud}}+{{d.s_longitud}}" target="external">{{d.s_latitud}} , {{d.s_longitud}}</a></td>
                                         <td>{{d.Area}}</td>
                                         <td>{{d.pais}}</td>
                                     </tr>
