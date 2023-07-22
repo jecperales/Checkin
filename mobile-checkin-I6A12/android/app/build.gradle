@@ -1,7 +1,9 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
+
+  namespace 'com.grupopissa.checkin'
+  compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "com.grupopissa.checkin"
         minSdkVersion rootProject.ext.minSdkVersion

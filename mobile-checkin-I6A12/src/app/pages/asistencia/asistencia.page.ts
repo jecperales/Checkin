@@ -58,7 +58,7 @@ export class AsistenciaPage implements OnInit {
     state: String,
     cell_phone: String,
     user: String,
-    password: String,
+    password: String, 
     id_profile: Number,
     id_proyecto: Number,
     pais: String,
@@ -171,7 +171,7 @@ export class AsistenciaPage implements OnInit {
       //this.getCurrentPosition();
       this.checkPermissions();
 
-      if(this.permisosOk){
+      
         this.asistence.latitud = this.latitude;
         this.asistence.longitud = this.longitude;
         this.asistence.fecha_hora_movil = this.GetFormattedDate(new Date());
@@ -201,10 +201,7 @@ export class AsistenciaPage implements OnInit {
             }
           }
         );
-      }
-      else{
-        this.presentAlert("Permisos no otorgados", "Registro no guardado.", "Para poder registrar tu entrada y salida necesitas otorgar los permisos de geolocalizacion");
-      }
+   
     }
     else//Actualizamos el registro
     {
@@ -282,14 +279,15 @@ export class AsistenciaPage implements OnInit {
       this.latitude = position.coords.latitude;
       this.longitude = position.coords.longitude;
       // console.log("latitud: " + this.latitude + " - " +"longitud: " + this.longitude);
+
       this.center = {
         lat: position.coords.latitude,
         lng: position.coords.longitude,
       };
-      // Set marker position
+        // Set marker position
       this.setMarkerPosition(this.latitude, this.longitude);
-
-      this.getAddress(this.latitude, this.longitude);
+  
+      this.getAddress(this.latitude, this.longitude);          
     });
   }
 
