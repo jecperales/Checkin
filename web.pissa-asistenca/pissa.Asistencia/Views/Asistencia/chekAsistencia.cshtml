@@ -1,7 +1,7 @@
 ﻿@{ ViewBag.Title = "chekAsistencia"; }
 
 
-<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+@*<script src="~/Scripts/jquery-3.6.0.min.js"></script>*@
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <link href='https://fonts.googleapis.com/css?family=Raleway:600,700' rel='stylesheet' type='text/css'>
 <style>
@@ -908,28 +908,13 @@
             console.log("LATITUD: " + latitud + " - LONGITUD: " + longitud)
         });
     } else {
-       // console.log("El explorador no soporta la geolocalizacion!");
+       console.log("El explorador no soporta la geolocalizacion!");
     }
 
 
     function regasistencias() {
-        //Probando obtener la hora del explorador desde javascript
-        //var d = new Date().toLocaleTimeString(
-        //    'es-MX',
-        //    {
-        //        hour12: false,
-        //        hour: "numeric",
-        //        minute: "numeric",
-        //        second: "numeric"
-        //    }
-        //);
-        
 
         var d = new Date().toLocaleString('es-MX')
-
-        console.log("Hora del explorador: ");
-        console.log(d);
-
 
         var control = {
                 latitud: latitud,
@@ -976,9 +961,6 @@
 
         var c = new Date().toLocaleDateString('es-MX');
 
-        console.log("Hora del explorador: ");
-        console.log(c);
-
         var control = {
                 latitud: 0,
                 longitud: 0,
@@ -989,8 +971,6 @@
                 s_latitud : latitud,
                 s_longitud: longitud
             };
-        console.log("COORDENADAS A ENVIAR");
-        console.log(control);
 
             $.ajax({
                 type: "POST",
@@ -998,8 +978,7 @@
                 content: "application/json; charset=utf-8",
                 dataType: "json",
                 data: control,
-                success: function (d) {
-                    console.log(d);
+                success: function (d) {                    
                     if (d == 0) {
                         swal("Warning.", "No hay registro del dia de hoy. Asegurate que hayas registrado tu entrada primero!.", "info");
                     } else if (d == 1) {

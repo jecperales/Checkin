@@ -30,6 +30,11 @@ namespace pissa.Asistencia.Bussines
             return new Dao.Asistencia().GeneraListaAsistenciaSupervisorLatam(fecha1, fecha2, proyectos, idUser, paisReporte);
         }
 
+        public List<genera_asistencias> GeneraListaAsistenciaCliente(DateTime fecha1, DateTime fecha2, int idProyecto) 
+        {
+            return new Dao.Asistencia().GeneraListaAsistenciaCliente(fecha1, fecha2, idProyecto);
+        }
+
         public control_asistencia regasistencias(control_asistencia control)
         {
             return new Dao.Asistencia().regasistencias(control);
@@ -57,6 +62,11 @@ namespace pissa.Asistencia.Bussines
             pag.Total = new Dao.Asistencia().getTotalPersonal();
             pag.Lista = new Dao.Asistencia().get_lista_personal(pageIndex, pageSize);
             return pag;
+        }
+
+        public int eliminarIngeniero(int id) 
+        {
+            return new Dao.Asistencia().eliminarIngeniero(id);
         }
     }
 }

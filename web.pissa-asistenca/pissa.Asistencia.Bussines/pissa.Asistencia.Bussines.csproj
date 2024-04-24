@@ -42,7 +42,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Acount.Bussines.cs" />
+    <Compile Include="Area.Bussiness.cs" />
     <Compile Include="Asistencia.Bussines.cs" />
+    <Compile Include="Perfil.Bussiness.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -17,22 +17,7 @@ namespace pissa.Asistencia.Dao
         //public DataContext() : base("Data Source = 127.0.0.1; Port=3306;Initial Catalog = assistence_management; Persist Security Info=True;User ID = root; Password=personal;")
         //{
 
-        //}
-
-        //public DataContext() : base("Data Source=172.16.1.60;Port=3306;Initial Catalog=assistence_management;Persist Security Info=True;User ID=asispissa;Password=asispissa123#.;")
-        //{
-
-        //}
-
-        //public DataContext() : base("Data Source = 172.16.102.254; Port=3306;Initial Catalog = assistence_management; Persist Security Info=True;User ID = asitenciaPissa; Password=asitencia1.;")
-        //{
-
-        //}
-
-        //public DataContext() : base("Data Source = 189.195.136.238; Port=3306;Initial Catalog = assistence_management; Persist Security Info=True;User ID = asitenciaPissa; Password=asitencia1.;")
-        //{
-
-        //}
+        //}      
 
         //SERVIDOR VIRTUAL DE TOTAL PLAY
         public DataContext() : base("Data Source = 189.203.240.97; Port=3306;Initial Catalog = assistence_management; Persist Security Info=True;User ID = monitorWeb; Password=mWebGrp#.;")
@@ -64,6 +49,8 @@ namespace pissa.Asistencia.Dao
         public DbSet<catalogo_celulares> catalogo_celulares { get; set; }
 
         public DbSet<country> country { get; set; }
+
+        public DbSet<perfil> perfil { get; set; }
 
 
     }

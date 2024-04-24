@@ -12,7 +12,7 @@ namespace pissa.Asistencia.Entities
                 
         [Key]
         public int id_ingeniero { get; set; }
-        public string engineer_id { get; set; }
+        public string status { get; set; }
         public string name { get; set; }
         public string last_name_p { get; set; }
         public string last_name_m { get; set; }

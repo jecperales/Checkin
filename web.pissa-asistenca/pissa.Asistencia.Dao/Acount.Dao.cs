@@ -25,7 +25,7 @@ namespace pissa.Asistencia.Dao
                         db.ingeniero.Add(new ingeniero
                         {
                             id_ingeniero = max,
-                            engineer_id = max.ToString(),
+                            status = "1",
                             name = registro.nombre,
                             last_name_p = registro.apPaterno,
                             last_name_m = registro.apMaterno,
@@ -191,7 +191,7 @@ namespace pissa.Asistencia.Dao
 
             using (DataContext db=new DataContext())
             {
-                var existe_user = db.ingeniero.Where(x=> x.user==correo && x.password==psw).FirstOrDefault();
+                var existe_user = db.ingeniero.Where(x=> x.user==correo && x.password==psw && x.status == "1").FirstOrDefault();
 
                 if (existe_user!=null) {
                     logeado.id = existe_user.id_ingeniero;
