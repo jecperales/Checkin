@@ -10,28 +10,6 @@ export class PermissionsService {
 
   constructor() { }
 
-  async askToTurnOnGPS(): Promise<boolean> {
-    return await new Promise((resolve, reject) => {
-      LocationAccuracy.canRequest().then((canRequest: boolean) => {
-        if(canRequest){
-          //La opcion accuracy sera ignorada por IOS
-          LocationAccuracy.request(LocationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY).then(
-            () => {
-              resolve(true);
-            },
-            error => {
-              resolve(false);
-            }
-          );
-        }
-        else{
-          resolve(false);
-        }
-      });
-    });
-  }
-
-
   //Checa si la aplicacion tiene permisos de uso del GPS
   async checkGPSPermission(): Promise<boolean> {
     return await new Promise((resolve, reject) =>{
@@ -57,6 +35,30 @@ export class PermissionsService {
       }
     });
   }
+
+  async askToTurnOnGPS(): Promise<boolean> {
+    return await new Promise((resolve, reject) => {
+      LocationAccuracy.canRequest().then((canRequest: boolean) => {
+        if(canRequest){
+          //La opcion accuracy sera ignorada por IOS
+          LocationAccuracy.request(LocationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY).then(
+            () => {
+              resolve(true);
+            },
+            error => {
+              resolve(false);
+            }
+          );
+        }
+        else{
+          resolve(false);
+        }
+      });
+    });
+  }
+
+
+  
 
   //Checa si hay permiso de uso de ubicacion
   async requestGPSPermission(): Promise<string>{

@@ -4,6 +4,8 @@ import { AsistenciaService } from '../../services/asistencia.service';
 import { AlertController, ToastController } from '@ionic/angular';
 import { Capacitor } from '@capacitor/core';
 import { PermissionsService } from '../../services/permissions.service';
+import { IonLoaderService } from 'src/app/services/ion-loader.service';
+
 
 import {
   GoogleMap,
@@ -26,6 +28,8 @@ export class AsistenciaPage implements OnInit {
   map!: GoogleMap;
   @ViewChild(MapInfoWindow, { static: false })
   info!: MapInfoWindow;
+
+  canUseGPS: boolean = false;
 
   address = '';
   latitude!: any;
@@ -98,7 +102,8 @@ export class AsistenciaPage implements OnInit {
     private geoCoder: MapGeocoder, 
     private apiAsistance: AsistenciaService,
     private alertCtrl: AlertController,
-    private permissions:PermissionsService) {
+    private permissions:PermissionsService,
+    private loader: IonLoaderService) {
 
     this.engineer = this.router.getCurrentNavigation()?.extras.state;
 
@@ -115,13 +120,102 @@ export class AsistenciaPage implements OnInit {
       this.router.navigate(['/login']);
     }
     else{
-      this.checkPermissions();
+      this.loader.showLoading("Consultando permisos...").then(() => {      
+        this.checkPerm();
+        this.loader.hideLoader();        
+      });
+
       this.getTodayAsistence();
     }
 
   }
 
-  getTodayAsistence()
+  async checkPerm()
+  {
+    var hasPermission = await this.permissions.checkGPSPermission();
+    var canUseGPS = await this.permissions.askToTurnOnGPS();
+
+    var res = false;
+
+    if(hasPermission)
+    {
+      if(Capacitor.isNativePlatform())
+      {
+        if(canUseGPS)
+        {
+          res = true;
+        }
+        else
+        {
+          this.presentAlert("Devices", "GPS", "Por favor encienda so GPS y conceda los permisos para acceder a su ubicacion.");
+          res = false;
+        }
+      }
+      else
+      {
+        res = true;        
+      }
+    }
+    else
+    {
+      var permission = await this.permissions.requestGPSPermission();
+
+      if(permission === "CAN_REQUEST" || permission === "GOT_PERMISSION")
+      {
+        if(canUseGPS)
+        {
+          res = true;
+        }
+        else
+        {
+          this.presentAlert("Devices", "GPS", "Por favor encienda so GPS y conceda los permisos para acceder a su ubicacion.");
+          res = false;
+        }
+      }
+      else
+      {
+        await this.presentAlert("Permisos", "Acceso denegado", "El usuario ha denegado los permisos de geolocalizacion.");
+        res = false;
+      }
+
+    }
+
+    return res;
+
+  }
+
+  // async checkPermissions(){
+  //   var hasPermission = await this.permissions.checkGPSPermission();
+  //   if(hasPermission){
+  //     if(Capacitor.isNativePlatform()){
+  //       this.canUseGPS = await this.permissions.askToTurnOnGPS();
+  //       this.postGPSPermission(this.canUseGPS);
+  //     }
+  //     else{
+  //       //this.postGPSPermission(true);
+  //       //this.canUseGPS = true;
+  //     }
+  //   }
+  //   else{
+  //     var permission = await this.permissions.requestGPSPermission();
+  //     if(permission === "CAN_REQUEST" || permission === "GOT_PERMISSION"){
+  //       if(Capacitor.isNativePlatform()){
+  //         this.canUseGPS = await this.permissions.askToTurnOnGPS();
+  //         this.postGPSPermission(this.canUseGPS);
+  //       }
+  //       else{
+  //         //this.postGPSPermission(true);
+  //         //this.canUseGPS = true;
+  //       }
+  //     }
+  //     else{
+  //       await this.presentAlert("Permisos", "Acceso denegado", "El usuario ha denegado los permisos de geolocalizacion.");
+  //       this.canUseGPS = false;
+  //     }
+  //   }
+  // }
+
+  async getTodayAsistence()
   {
     
     let date = new Date()
@@ -131,7 +225,7 @@ export class AsistenciaPage implements OnInit {
 
     let formattedDate = year.toString() + "-" + (month < 10 ? '0'+ month.toString():month.toString()) + "-" + (day < 10 ? '0' + day.toString() : day.toString());
 
-    this.apiAsistance.getTodayAsistence(formattedDate, this.engineer.id_ingeniero).subscribe(
+    await this.apiAsistance.getTodayAsistence(formattedDate, this.engineer.id_ingeniero).subscribe(
       {
         next:(res) => {
           if(res){
@@ -153,25 +247,37 @@ export class AsistenciaPage implements OnInit {
           {
             console.log("No hay datos de asistencia");
             this.asistence.id_asistencia = 0;
-
           }
-
         },
         error: (err) => {
           console.log(err);
+        },
+        complete: () => { 
+          console.log("getTodayAsistance complete...");
+
         }
       }
     );
   }
 
-  saveInOut(){
+  async saveInOut(){
     
     if(this.asistence.id_asistencia == 0)//Insertamos un registro nuevo
     {
-      //this.getCurrentPosition();
-      this.checkPermissions();
+        //await this.getCurrentPosition();
+        //this.checkPermissions();  
+        var permissionsOk = await this.checkPerm();
+        
+        if(permissionsOk)
+        {
+          await this.getCurrentPosition();
+        }
+        else
+        {
+          return;
+        }
 
-      
+
         this.asistence.latitud = this.latitude;
         this.asistence.longitud = this.longitude;
         this.asistence.fecha_hora_movil = this.GetFormattedDate(new Date());
@@ -181,10 +287,7 @@ export class AsistenciaPage implements OnInit {
         this.asistence.s_latitud = 0;
         this.asistence.s_longitud = 0;
 
-        //Reseteamos la bandera
-        this.permisosOk= false;
-
-        this.apiAsistance.postAsistence(this.asistence).subscribe(
+        await this.apiAsistance.postAsistence(this.asistence).subscribe(
           {
             next: (res) =>{
               if(res){
@@ -198,6 +301,9 @@ export class AsistenciaPage implements OnInit {
             },
             error: (err) =>{
               this.presentAlert("Error Exception.", "Error desconocido", "Ocurrio un error al registrar si asitencia. Favor de contactar a su administrador.");
+            },
+            complete: () => {
+              console.log("saveInOut complete...");
             }
           }
         );
@@ -206,66 +312,39 @@ export class AsistenciaPage implements OnInit {
     else//Actualizamos el registro
     {
       //this.getCurrentPosition();
-      this.checkPermissions();
-
-      if(this.permisosOk){
-        this.asistence.fecha_hora_salida = this.GetFormattedDate(new Date());
-        this.asistence.s_latitud = this.latitude;
-        this.asistence.s_longitud = this.longitude;
-
-        console.log(this.asistence);
-
-        this.apiAsistance.putAsistencia(this.asistence).subscribe({
-          next: (res) => {
-            this.presentAlert("Asistencia", "Salida", "Su salida ha sido registrada con éxito");
-            this.dateCheckout = this.asistence.fecha_hora_salida.toString().replace("T"," ")
-          },
-          error: (err) => {
-            console.log(err);
-            this.presentAlert("Error Exception.", "Error desconocido", "Ocurrio un error al registrar su asitencia. Favor de contactar a su administrador.");
-          }
-        });
-      }
-      else{
-        this.presentAlert("Permisos no otorgados", "Registro no guardado", "Para poder registrar tu entrada y salida necesitas otorgar los permisos de geolocalizacion");
-      }
-
-      
-    }
-
-  }
-
-  async checkPermissions(){
-    const hasPermission = await this.permissions.checkGPSPermission();
-    if(hasPermission){
-      if(Capacitor.isNativePlatform()){
-        const canUseGPS = await this.permissions.askToTurnOnGPS();
+      //await this.checkPermissions();
+      var permissionsOk = await this.checkPerm();
         
-        this.postGPSPermission(canUseGPS);
+      if(permissionsOk)
+      {
+        await this.getCurrentPosition();
       }
-      else{
-        this.postGPSPermission(true);
+      else
+      {
+        return;
       }
-    }
-    else{
-      const permission = await this.permissions.requestGPSPermission();
-      if(permission === "CAN_REQUEST" || permission === "GOT_PERMISSION"){
-        if(Capacitor.isNativePlatform()){
-          const canUseGPS = await this.permissions.askToTurnOnGPS();
-          this.postGPSPermission(canUseGPS);
+      
+      this.asistence.fecha_hora_salida = await this.GetFormattedDate(new Date());
+      this.asistence.s_latitud = this.latitude;
+      this.asistence.s_longitud = this.longitude;
+
+      console.log(this.asistence);
+
+      await this.apiAsistance.putAsistencia(this.asistence).subscribe({
+        next: (res) => {
+          this.presentAlert("Asistencia", "Salida", "Su salida ha sido registrada con éxito");
+          this.dateCheckout = this.asistence.fecha_hora_salida.toString().replace("T"," ")
+        },
+        error: (err) => {
+          console.log(err);
+          this.presentAlert("Error Exception.", "Error desconocido", "Ocurrio un error al registrar su asitencia. Favor de contactar a su administrador.");
         }
-        else{
-          this.postGPSPermission(true);
-        }
-      }
-      else{
-        await this.presentAlert("Permisos", "Acceso denegado", "El usuario ha denegado los permisos de geolocalizacion.");
-      }
+      });            
     }
-  }
+  }  
 
   async postGPSPermission(canUseGPS: boolean) {
-    if (canUseGPS) { this.getCurrentPosition(); }
+    if (canUseGPS) { await this.getCurrentPosition(); }
     else {
       // await Toast.show({
       //   text: 'Please turn on GPS to get location'
@@ -274,8 +353,8 @@ export class AsistenciaPage implements OnInit {
     }
   }
 
-  getCurrentPosition(){
-    navigator.geolocation.getCurrentPosition((position) => {
+  async getCurrentPosition(){
+    await navigator.geolocation.getCurrentPosition((position) => {
       this.latitude = position.coords.latitude;
       this.longitude = position.coords.longitude;
       // console.log("latitud: " + this.latitude + " - " +"longitud: " + this.longitude);
@@ -291,7 +370,7 @@ export class AsistenciaPage implements OnInit {
     });
   }
 
-  setMarkerPosition(latitude: any, longitude: any) {
+  async setMarkerPosition(latitude: any, longitude: any) {
     // Set marker position
     this.markers = [
       {
@@ -364,7 +443,7 @@ export class AsistenciaPage implements OnInit {
       backdropDismiss: false,
       header: header,
       subHeader: subHeader,
-      message: message,
+      message: message,      
       buttons: ['OK'],
     });
 

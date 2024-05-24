@@ -169,7 +169,14 @@ app.controller('myCtrl', function ($scope, $http) {
             )
 
             $scope.chartSinSalida.data.push(count);
-        });       
+        });
+
+        for (let i = $scope.chartSinSalida.data.length-1; i >= 0; i--) {
+            if ($scope.chartSinSalida.data[i] === 0) {
+                $scope.chartSinSalida.data.splice(i, 1);
+                $scope.chartSinSalida.labels.splice(i, 1);
+            }
+        }
 
         new Chart(ctx, {
             type: 'bar',
@@ -227,7 +234,14 @@ app.controller('myCtrl', function ($scope, $http) {
 
                 $scope.chartRetardos.data.push(count);
             }
-        }        
+        }
+
+        for (let i = $scope.chartRetardos.data.length - 1; i >= 0; i--) {
+            if ($scope.chartRetardos.data[i] === 0) {
+                $scope.chartRetardos.data.splice(i, 1);
+                $scope.chartRetardos.labels.splice(i, 1);
+            }
+        }
 
         new Chart(ctx2, {
             type: 'bar',
@@ -288,6 +302,13 @@ app.controller('myCtrl', function ($scope, $http) {
             $scope.chartNoCumple.data.push(counter);
         }
 
+        for (let i = $scope.chartNoCumple.data.length - 1; i >= 0; i--) {
+            if ($scope.chartNoCumple.data[i] === 0) {
+                $scope.chartNoCumple.data.splice(i, 1);
+                $scope.chartNoCumple.labels.splice(i, 1);
+            }
+        }
+
         new Chart(ctx3, {
             type: 'bar',
             data: {
@@ -331,15 +352,15 @@ app.controller('myCtrl', function ($scope, $http) {
         /* Obtenemos los nombres unicos de los ingenieros */
         $scope.chartFaltas.labels = $scope.getNombreIngenieroOnly();
 
-        console.log(f1);
-        console.log(f2);
+        //console.log(f1);
+        //console.log(f2);
 
         let diferenciaEnTiempo = new Date(f2) - new Date(f1);//2505600000
         //let dayCounterByDateRange = new Date($scope.fecha_fin).getTime() - new Date($scope.fecha_inicio).getTime();//2505600000
         let diferenciaEnDias = diferenciaEnTiempo / (1000 * 3600 * 24) + 1;
 
-        console.log("Contador de dias por el rango especificado");
-        console.log(diferenciaEnDias);
+        //console.log("Contador de dias por el rango especificado");
+        //console.log(diferenciaEnDias);
 
         /*Contamos los registros que tienen retardos*/
         /*

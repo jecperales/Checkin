@@ -2918,6 +2918,7 @@
     <Content Include="Scripts\jquery-3.6.0.min.map" />
     <Content Include="Views\Asistencia\Charts.cshtml" />
     <Content Include="Views\Area\Index.cshtml" />
+    <Content Include="Views\Shared\_TestLayout.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

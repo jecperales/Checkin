@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { AuthService } from '../../services/auth.service';
 import { LoadingController } from '@ionic/angular';
+import { IonLoaderService } from '../../services/ion-loader.service';
+
 
 @Component({
   selector: 'app-login',
@@ -32,35 +34,29 @@ export class LoginPage implements OnInit {
     pais_reporte: String
   }
   
-  constructor(public apiAuth:AuthService, private alertCtrl: AlertController, private route: Router, private loadingCtrl: LoadingController) {
+  constructor(public apiAuth:AuthService, 
+              private alertCtrl: AlertController, 
+              private route: Router, 
+              private loadingCtrl: LoadingController,
+              private loader: IonLoaderService) {
   }
 
   ngOnInit() {
   }
 
 
-  async presentAlert(header:string, subHeader: string, message: string, ) {
+  async presentAlert(header:string, subHeader: string, message: string ) {
     const alert = await this.alertCtrl.create({
       backdropDismiss: false,
       header: header,
       subHeader: subHeader,
-      message: message,
+      message: message, 
       buttons: ['OK'],
+      
     });
 
     await alert.present();
   }
-
-
-  async showLoading() {
-    const loading = await this.loadingCtrl.create({
-      message: 'Espere...',
-      duration: 2000,
-    });
-
-    loading.present();
-  }
-
   
   login(uid: string, password: string)
   {
@@ -76,30 +72,30 @@ export class LoginPage implements OnInit {
       return;           
     }
 
-    this.apiAuth.getLogin(this.uid, this.password).subscribe(
-      {
-        next: (res) =>{
-          if(res){
-            this.engineer = res;
-            //this.showLoading();          
-
-            //Cargamos la pagina del mapa y enviamos los datos del ingeniero logueado
-            this.route.navigate(['/asistencia'],{state: this.engineer});
+    this.loader.showLoading("Cargando...").then(() => {
+      this.apiAuth.getLogin(this.uid, this.password).subscribe(
+        {
+          next: (res) =>{
+            if(res){
+              this.engineer = res;                    
+  
+              //Cargamos la pagina del mapa y enviamos los datos del ingeniero logueado
+              this.route.navigate(['/asistencia'],{state: this.engineer});
+            }
+            else{
+              this.presentAlert("Autenticación.", "Credenciales incorrectas.", "Usuario y/o contraseña incorrectos.");            
+            }    
+          },
+          error: (err) => {
+            this.presentAlert("Error", "Error desconocido...", err);      
+          },
+          complete: () => {
+            console.info("Complete");
+            this.loader.hideLoader();
           }
-          else{
-            this.presentAlert("Autenticación.", "Credenciales incorrectas.", "Usuario y/o contraseña incorrectos.");            
-          }    
-        },
-        error: (err) => {
-          console.log("Error: ");
-          console.error(err);
-        },
-        complete: () => {
-          console.info("Complete");
-          
         }
-      }
-    );
+      );
 
+    });
   }
 }

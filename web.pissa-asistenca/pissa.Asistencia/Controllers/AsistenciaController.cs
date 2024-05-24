@@ -187,13 +187,14 @@ namespace pissa.Asistencia.Controllers
 
         public ActionResult regasistencias(control_asistencia control)
         {
-            int id_user = int.Parse(Session["idSesion"].ToString());
+            int id_user = int.Parse(Session["idSesion"].ToString());           
             control.id_ingeniero = id_user;
-            control.fecha_hora_registro = DateTime.Now;
+            ViewBag.fecha_hora_movil = control.fecha_hora_registro.ToString("dd/MM/yyyy HH:mm:ss");
 
             var resul = new Bussines.Asistencia().regasistencias(control);
             if (resul.id_ingeniero!=0) {
-                return Json(true);
+                var resp = "ok";
+                return Json(control.fecha_hora_registro.ToString("dd/MM/yyyy HH:mm:ss"));
             }
             else
             {
@@ -202,33 +203,39 @@ namespace pissa.Asistencia.Controllers
             
         }
 
-        public string registraSalida(control_asistencia control)
+        public ActionResult registraSalida(control_asistencia control)
         {
             int id_user = int.Parse(Session["idSesion"].ToString());
             control.id_ingeniero = id_user;
-            control.fecha_hora_salida = DateTime.Now;
+            //control.fecha_hora_salida = DateTime.Now;
 
             ViewBag.ingenieroId = id_user;
-            ViewBag.fecha_hora_salida = control.fecha_hora_salida;
+            ViewBag.fecha_hora_salida = control.fecha_hora_salida.ToLongDateString();
             
             var resul = new Bussines.Asistencia().registraSalida(control);
 
-            return resul.ToString();
+            if (resul == "1")
+            {
+                return Json(control.fecha_hora_salida.ToString("dd/MM/yyyy HH:mm:ss"));
+            }
+            else 
+            {
+                return Json("0");
+            }
         }
 
         [HttpPost]
         public ActionResult generaAsistencias(filtro_asistencia filtro)
         {
-            List<genera_asistencias> result = new List<genera_asistencias>();            
+            List<genera_asistencias> result = new List<genera_asistencias>();
+            int profile = int.Parse(Session["Profile"].ToString());
+            int id_user = int.Parse(Session["idSesion"].ToString());
+            int idProyecto = int.Parse(Session["Proyecto"].ToString());
+            string pais_reporte = filtro.paisReporte;
+            int[] _idUser = null;
 
             if (Session["correo"] != null)
-            {
-                int profile = int.Parse(Session["Profile"].ToString());
-                int id_user = int.Parse(Session["idSesion"].ToString());
-                int idProyecto = int.Parse(Session["Proyecto"].ToString());
-                string pais_reporte = filtro.paisReporte;
-                int[] _idUser=null;
-               
+            {                               
                 switch (profile) 
                 {
                     case 1:                    
@@ -375,16 +382,18 @@ namespace pissa.Asistencia.Controllers
             ws.Cell(1, 2).Value = "Fecha Registro";
             ws.Cell(1, 3).Value = "Hora de entrada";
             ws.Cell(1, 4).Value = "Ubicacion de entrada";
-            ws.Cell(1, 5).Value = "Hora de salida";
-            ws.Cell(1, 6).Value = "Ubicacion de salida";
-            ws.Cell(1, 7).Value = "Area";
-            ws.Cell(1, 8).Value = "Pais";         
+            ws.Cell(1, 5).Value = "Fecha Salida";
+            ws.Cell(1, 6).Value = "Hora de salida";
+            ws.Cell(1, 7).Value = "Ubicacion de salida";
+            ws.Cell(1, 8).Value = "Area";
+            ws.Cell(1, 9).Value = "Pais";         
 
             foreach (var a in result)
             {
                 nombre = a.Nombre + " " + a.last_name_p + " " + a.last_name_m;
                 fecha = a.fecha_hora_registro.Substring(0, 10);
                 hora = Convert.ToDateTime(a.fecha_hora_registro).ToString("HH:mm:ss");
+
                 
                 fecha_s = Convert.ToDateTime(a.fecha_hora_salida) < DateTime.Parse("01/01/1900") ? "No hay registro" : a.fecha_hora_salida.Substring(0, 10);
                 //hora_s = Convert.ToDateTime(a.fecha_hora_salida) < DateTime.Parse("01/01/1900") ? "No hay registro" : a.fecha_hora_salida.Substring(11, 14);
@@ -392,7 +401,7 @@ namespace pissa.Asistencia.Controllers
 
                 link_e = "http://maps.google.com/maps?z=12&t=m&q=loc:" + a.latitud.ToString() + "+" + a.longitud.ToString();
 
-                if (a.s_latitud > 0)
+                if (a.s_latitud != 0)
                 {
                     link_s = "http://maps.google.com/maps?z=12&t=m&q=loc:" + a.s_latitud.ToString() + "+" + a.s_longitud.ToString();
                 }
@@ -410,6 +419,8 @@ namespace pissa.Asistencia.Controllers
 
                 ws.Cell(row, ++col).Value = a.latitud.ToString() + " , " + a.longitud.ToString();
                 ws.Cell(row, col).Hyperlink = new XLHyperlink(link_e);
+
+                ws.Cell(row, ++col).Value = fecha_s;
 
                 ws.Cell(row, ++col).SetDataType(XLDataType.TimeSpan);
                 ws.Cell(row, col).Style.DateFormat.Format = "HH:mm:ss";                

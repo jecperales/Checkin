@@ -63,7 +63,7 @@ namespace api.checkin.Controllers
         //[HttpDelete]
         //public async Task<IActionResult> DeleteIngeniero(int id)
         //{
-        //    await _ingenieroRepository.DeleteIngeniero(new Ingeniero { id_ingeniero = id});
+        //    await _ingenieroRepository.DeleteIngeniero(new Ingeniero { id_ingeniero = id});S
 
         //    return NoContent();
         //}

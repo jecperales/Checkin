@@ -16,7 +16,6 @@ namespace pissa.Asistencia.Entities
         public DateTime fecha_hora_movil { get; set; }
         public DateTime fecha_hora_registro { get; set; }
         public int id_ingeniero { get; set; }
-
         //Agregadas por José Enrique Cruz Perales  2022/03/08
         public DateTime fecha_hora_salida { get; set; }
         public double s_latitud { get; set; }

@@ -411,6 +411,14 @@ namespace pissa.Asistencia.Dao
 
         public control_asistencia regasistencias(control_asistencia control)
         {
+            var year = control.fecha_hora_registro.Year;
+            var month = control.fecha_hora_registro.Month;
+            var day = control.fecha_hora_registro.Day;
+
+            string formattedDate = control.fecha_hora_registro.ToString("yyyy-MM-dd HH:mm:ss");
+
+            string query = "INSERT INTO control_asistencia (latitud, longitud, fecha_hora_movil, fecha_hora_registro, id_ingeniero, fecha_hora_salida, s_latitud, s_longitud) VALUES " + 
+                "(" + control.latitud.ToString() + ", " + control.longitud.ToString() + ", ";
             using (DataContext db=new DataContext())
             {
                 db.control_asistencia.Add(control);
