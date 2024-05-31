@@ -1,9 +1,10 @@
 ﻿@{ ViewBag.Title = "chekAsistencia"; }
 
-
-@*<script src="~/Scripts/jquery-3.6.0.min.js"></script>*@
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <link href='https://fonts.googleapis.com/css?family=Raleway:600,700' rel='stylesheet' type='text/css'>
+
+@*<script src="~/Scripts/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>*@
+
 <style>
 
     * {
@@ -707,16 +708,13 @@
             transform: scale(1.1);
         }
 </style>
-<div class="">
+<div class="container-fluid">
 
     <!-- Jumbotron -->@*https://mdbcdn.b-cdn.net/img/Photos/Others/forest2.webp*@
     <div class="card card-image" style="background-image: url('../../assets/images/gallery/2817288.jpg'); background-size: cover; ">
         <div class="text-black-50 text-center rgba-stylish-strong py-5 ">
             <div class="py-5">
-
-
                 <!-- Content -->
-                @*<h5 class="h5 orange-text"><i class="fas fa-camera-retro"></i> Photography</h5>*@
                 <div class="fecha">
                     <span id="diaSemana" class="diaSemana"></span>
                     <span id="dia" class="dia"></span>
@@ -733,12 +731,10 @@
 
                 </div>
 
-                @*<a class="btn peach-gradient"><i class="fas fa-clone left"></i> View project</a>*@
                 <div class="row col-lg-12" style="padding-right:0.0rem">
 
-                    <div class="col-lg-6" style="padding-right:0.0rem">                        
-                        @{
-                            var fecha_hora_movil = "";
+                    <div class="col-lg-6" style="padding-right:0.0rem">
+                        @{ var fecha_hora_movil = "";
                             if (ViewBag.fecha_hora_movil != "")
                             {
                                 fecha_hora_movil = ViewBag.fecha_hora_movil;
@@ -747,50 +743,42 @@
 
                             if (!fecha_hora_movil.ToString().Equals(""))
                             {
-                                <button type="button" id="registrarEntradaBtn" onclick="requestGeolocation('regasistencias')" class="btn btn-lg btn-dark col-12" disabled>Registrar Entrada</button>
-                                <div class="alert alert-success" role="alert" id="alertEntrada" >
+                <button type="button" id="registrarEntradaBtn" onclick="requestGeolocation('regasistencias')" class="btn btn-lg btn-dark col-12" disabled>Registrar Entrada</button>
+                                <div class="alert alert-success" role="alert" id="alertEntrada">
                                     <h4 class="alert-heading" style="font-size:3vw">Bien hecho!</h4>
                                     <p style="font-size:2vw">Ya has registrado tu hora de entrada.</p>
                                     <hr>
                                     <p class="mb-0" id="pFechaHoraEntrada" style="font-size:2vw">@ViewBag.fecha_hora_movil </p>
-                                </div>
-                            }
+                                </div> }
                             else
                             {
-                                <button type="button" id="registrarEntradaBtn" onclick="requestGeolocation('regasistencias')" class="btn btn-lg btn-info col-12" >Registrar Entrada</button>
+                <button type="button" id="registrarEntradaBtn" onclick="requestGeolocation('regasistencias')" class="btn btn-lg btn-info col-12">Registrar Entrada</button>
                                 <div class="alert alert-success" role="alert" id="alertEntrada" style="display:none">
                                     <h4 class="alert-heading" style="font-size:3vw">Bien hecho!</h4>
                                     <p style="font-size:2vw">Ya has registrado tu hora de entrada.</p>
                                     <hr>
                                     <p class="mb-0" id="pFechaHoraEntrada" style="font-size:2vw">@ViewBag.fecha_hora_movil</p>
-                                </div>
-                            }
-
-                         }                      
+                                </div> } }
                     </div>
                     <div class="col-lg-6" style="padding-right:0.0rem">
-                        @{ 
-                            if (!ViewBag.fecha_hora_salida.ToString().Equals("") && !ViewBag.fecha_hora_salida.ToString().Equals("01/01/0001 12:00:00 a. m."))
+                        @{ if (!ViewBag.fecha_hora_salida.ToString().Equals("") && !ViewBag.fecha_hora_salida.ToString().Equals("01/01/0001 12:00:00 a. m."))
                             {
-                                <button type="button" id="registrarSalidaBtn" onclick="requestGeolocation('registrarSalida')" class="btn btn-lg btn-dark col-12" disabled>Registrar Salida</button>
+                <button type="button" id="registrarSalidaBtn" onclick="requestGeolocation('registrarSalida')" class="btn btn-lg btn-dark col-12" disabled>Registrar Salida</button>
                                 <div class="alert alert-success" role="alert" id="alertSalida">
                                     <h4 class="alert-heading" style="font-size:3vw">Bien hecho!</h4>
                                     <p style="font-size:2vw"> Ya has registrado tu hora de salida.</p>
                                     <hr>
                                     <p class="mb-0" id="pFechaHoraSalida" style="font-size:2vw">@ViewBag.fecha_hora_salida</p>
-                                </div> 
-                            }
+                                </div> }
                             else
-                            { 
-                                <button type="button" id="registrarSalidaBtn" onclick="requestGeolocation('registrarSalida')" class="btn btn-lg btn-danger col-12">Registrar Salida</button>
+                            {
+                <button type="button" id="registrarSalidaBtn" onclick="requestGeolocation('registrarSalida')" class="btn btn-lg btn-danger col-12">Registrar Salida</button>
                                 <div class="alert alert-success" role="alert" id="alertSalida" style="display:none">
                                     <h4 class="alert-heading" style="font-size:3vw">Bien hecho!</h4>
                                     <p style="font-size:2vw"> Ya has registrado tu hora de salida.</p>
                                     <hr>
-                                    <p class="mb-0" id ="pFechaHoraSalida" style="font-size:2vw">@ViewBag.fecha_hora_salida</p>
-                                </div> 
-                            }
-                        }                       
+                                    <p class="mb-0" id="pFechaHoraSalida" style="font-size:2vw">@ViewBag.fecha_hora_salida</p>
+                                </div> } }
                     </div>
                 </div>
             </div>
@@ -800,8 +788,6 @@
 
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-Knob/1.2.13/jquery.knob.min.js"></script>
 
 <script>
 
@@ -927,7 +913,7 @@
                 }
 
                 if (res.state === 'prompt') {
-                    //Los permisos no estan concedidos pero se pueden solicitar al usuario                    
+                    //Los permisos no estan concedidos pero se pueden solicitar al usuario
                     navigator.geolocation.getCurrentPosition(function (position) {
                         latitud = position.coords.latitude;
                         longitud = position.coords.longitude;
@@ -951,7 +937,7 @@
 
                         }
                         else {
-                            swal("El usuario no concedio los permisos de ubicacion", "PERMISOS", "error");                            
+                            swal("El usuario no concedio los permisos de ubicacion", "PERMISOS", "error");
                         }
                     }
                 }
@@ -963,7 +949,7 @@
         }
         else {
             //El navegar no soportada por este navegador
-            swal("Geolocalizacion no soportada por este navegador", "PERMISOS", "error");            
+            swal("Geolocalizacion no soportada por este navegador", "PERMISOS", "error");
         }
 
     }
@@ -975,11 +961,11 @@
                 swal("Los permisos de ubicacion fueron concedidos correctamente. Ya puede rgistrar su asistencia", "PERMISOS", "success");
             }
             else if (newState === 'prompt') {
-                swal("Los permisos de ubicacion no fueron concedidos. Se solicitaran la proxima vez que registre su asistencia", "PERMISOS", "warning");                
+                swal("Los permisos de ubicacion no fueron concedidos. Se solicitaran la proxima vez que registre su asistencia", "PERMISOS", "warning");
             }
             else {
                 //Los permisos de ubicacion no estan concedidos y no se pueden solicitar
-                swal("Los permisos de ubicacion no fueron concedidos y no se puden solicitar. Activelos manualmente!", "PERMISOS", "error");               
+                swal("Los permisos de ubicacion no fueron concedidos y no se puden solicitar. Activelos manualmente!", "PERMISOS", "error");
             }
         }
         else {
@@ -1016,7 +1002,7 @@
 
                     }
                     else if (permission.state === 'prompt') {
-                        
+
                         navigator.geolocation.getCurrentPosition(noop);
                     }
                     else {
@@ -1027,13 +1013,13 @@
                     permission.addEventListener('change', function (e) {
                         handleChange(permissionName, permission.state);
                     });
-                    
+
                 });
             }
             else {
                 //El navegar no soportada por este navegador
                 swal("Geolocalizacion no soportada por este navegador", "PERMISOS", "error");
-            }            
+            }
         }
         catch (e) {
             console.log(e);
@@ -1042,14 +1028,14 @@
 
     function requestGeolocation(funcDesc) {
         checkGeolocationPermission("geolocation");
-        funcionName = funcDesc;                
+        funcionName = funcDesc;
     }
 
     var noop = function () { }
 
     function regasistencias() {
 
-        var d = new Date().toISOString();        
+        var d = new Date().toISOString();
 
         var control = {
             latitud: latitud,
@@ -1142,4 +1128,5 @@
     }
 
 </script>
+
 

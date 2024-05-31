@@ -77,34 +77,43 @@ namespace pissa.Asistencia.Controllers
 
         public ActionResult chekAsistencia()
         {
-            control_asistencia ca = new control_asistencia();
-
-            int ingenieroId = int.Parse(Session["idSesion"].ToString());
-            //control.id_ingeniero = id_user;
-            //control.fecha_hora_registro = DateTime.Now;
-
-            if (Session["correo"] != null)
+            try
             {
-                //Agregado por Jose Enrique Cruz Perales el 9 de Marzo de 2022
-                ViewBag.profile = int.Parse(Session["Profile"].ToString());
+                control_asistencia ca = new control_asistencia();
 
-                ca = new Bussines.Asistencia().getAsistenciaToday(ingenieroId);
-                ViewBag.id_asistencia = ca?.id_asistencia ?? 0;
-                ViewBag.latitud = ca?.latitud ?? 0;
-                ViewBag.longitud = ca?.longitud ?? 0;
-                ViewBag.fecha_hora_movil = ca?.fecha_hora_movil.ToString() ?? "";
-                ViewBag.fecha_hora_registro = ca?.fecha_hora_registro.ToString() ?? "";
-                ViewBag.id_ingeniero = ca?.id_ingeniero ?? 0;
-                ViewBag.fecha_hora_salida = ca?.fecha_hora_salida.ToString() ?? "";
-                ViewBag.s_latitud = ca?.s_latitud ?? 0;
-                ViewBag.s_longitud = ca?.s_longitud ?? 0;
+                int ingenieroId = int.Parse(Session["idSesion"].ToString());
+                //control.id_ingeniero = id_user;
+                //control.fecha_hora_registro = DateTime.Now;
 
-                return View(ca);
+                if (Session["correo"] != null)
+                {
+                    //Agregado por Jose Enrique Cruz Perales el 9 de Marzo de 2022
+                    ViewBag.profile = int.Parse(Session["Profile"].ToString());
+
+                    ca = new Bussines.Asistencia().getAsistenciaToday(ingenieroId);
+                    ViewBag.id_asistencia = ca?.id_asistencia ?? 0;
+                    ViewBag.latitud = ca?.latitud ?? 0;
+                    ViewBag.longitud = ca?.longitud ?? 0;
+                    ViewBag.fecha_hora_movil = ca?.fecha_hora_movil.ToString() ?? "";
+                    ViewBag.fecha_hora_registro = ca?.fecha_hora_registro.ToString() ?? "";
+                    ViewBag.id_ingeniero = ca?.id_ingeniero ?? 0;
+                    ViewBag.fecha_hora_salida = ca?.fecha_hora_salida.ToString() ?? "";
+                    ViewBag.s_latitud = ca?.s_latitud ?? 0;
+                    ViewBag.s_longitud = ca?.s_longitud ?? 0;
+
+                    return View(ca);
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Acount");
+                }
+
             }
-            else
+            catch (Exception ex)
             {
                 return RedirectToAction("Index", "Acount");
             }
+            
                
         }
 
