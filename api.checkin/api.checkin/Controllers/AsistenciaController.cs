@@ -45,8 +45,8 @@ namespace api.checkin.Controllers
 
         }
 
-        [HttpPut("Update/")]
-        [HttpOptions]
+        [HttpPost("Update/")]
+        //[HttpOptions]
         public async Task<IActionResult> UpdateAsistencia([FromBody] control_asistencia asistencia)
         {
             if (asistencia == null)
@@ -55,9 +55,9 @@ namespace api.checkin.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            await _asistenciaRepository.UpdateAsistencia(asistencia);
+            var res = await _asistenciaRepository.UpdateAsistencia(asistencia);
 
-            return NoContent();
+            return Created("Updated", res);
         }
 
         //[HttpDelete]

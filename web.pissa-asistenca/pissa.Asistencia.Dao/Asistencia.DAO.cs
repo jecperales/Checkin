@@ -409,22 +409,28 @@ namespace pissa.Asistencia.Dao
             }
         }
 
-        public control_asistencia regasistencias(control_asistencia control)
+        //public control_asistencia regasistencias(control_asistencia control)
+        public string regasistencias(control_asistencia control)
         {
-            var year = control.fecha_hora_registro.Year;
-            var month = control.fecha_hora_registro.Month;
-            var day = control.fecha_hora_registro.Day;
+            string qEntrada = "SELECT * FROM control_asistencia WHERE id_ingeniero IN (" + control.id_ingeniero.ToString() +
+                              ") AND date_format(fecha_hora_registro,'%Y-%m-%d') = date_format('" + 
+                              control.fecha_hora_registro.ToString("yyyy-MM-dd") + "','%Y-%m-%d');";
 
-            string formattedDate = control.fecha_hora_registro.ToString("yyyy-MM-dd HH:mm:ss");
-
-            string query = "INSERT INTO control_asistencia (latitud, longitud, fecha_hora_movil, fecha_hora_registro, id_ingeniero, fecha_hora_salida, s_latitud, s_longitud) VALUES " + 
-                "(" + control.latitud.ToString() + ", " + control.longitud.ToString() + ", ";
             using (DataContext db=new DataContext())
             {
-                db.control_asistencia.Add(control);
-                db.SaveChanges();
-            }
-            return control;
+                var hayEntrada = db.Database.SqlQuery<control_asistencia>(qEntrada).FirstOrDefault();
+
+                if (hayEntrada != null)
+                {
+                    return hayEntrada.fecha_hora_registro.ToString();
+                }
+                else 
+                {
+                    db.control_asistencia.Add(control);
+                    var res = db.SaveChanges();
+                    return res.ToString();
+                }                
+            }            
         }
 
         public string registraSalida(control_asistencia control)

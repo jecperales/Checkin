@@ -69,6 +69,7 @@
     <Compile Include="DataContext.cs" />
     <Compile Include="Perfil.DAO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Testing.DAO.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\pissa.Asistencia.Entities\pissa.Asistencia.Entities.csproj">

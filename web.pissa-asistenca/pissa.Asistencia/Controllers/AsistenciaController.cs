@@ -200,37 +200,24 @@ namespace pissa.Asistencia.Controllers
             control.id_ingeniero = id_user;
             ViewBag.fecha_hora_movil = control.fecha_hora_registro.ToString("dd/MM/yyyy HH:mm:ss");
 
-            var resul = new Bussines.Asistencia().regasistencias(control);
-            if (resul.id_ingeniero!=0) {
-                var resp = "ok";
-                return Json(control.fecha_hora_registro.ToString("dd/MM/yyyy HH:mm:ss"));
-            }
-            else
-            {
-                return Json(false);
-            }
+            var result = new Bussines.Asistencia().regasistencias(control);
+            return Json(result);
             
         }
 
         public ActionResult registraSalida(control_asistencia control)
         {
+
             int id_user = int.Parse(Session["idSesion"].ToString());
             control.id_ingeniero = id_user;
-            //control.fecha_hora_salida = DateTime.Now;
 
             ViewBag.ingenieroId = id_user;
             ViewBag.fecha_hora_salida = control.fecha_hora_salida.ToLongDateString();
             
-            var resul = new Bussines.Asistencia().registraSalida(control);
+            var result = new Bussines.Asistencia().registraSalida(control);
 
-            if (resul == "1")
-            {
-                return Json(control.fecha_hora_salida.ToString("dd/MM/yyyy HH:mm:ss"));
-            }
-            else 
-            {
-                return Json("0");
-            }
+            return Json(result);
+
         }
 
         [HttpPost]

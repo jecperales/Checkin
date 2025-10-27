@@ -12,11 +12,12 @@ export class IonLoaderService {
   async showLoading(msg: string) {
     const  loading = await this.loadingCtrl.create({
       message : msg,
-      //duration : 5000
     }).then((res) => {
       res.present();
+    })
+    .catch((err) => {
+      console.log("Error al crear el loader: " + err);
     });
-    //loading.present();
   }
 
   async hideLoader() {

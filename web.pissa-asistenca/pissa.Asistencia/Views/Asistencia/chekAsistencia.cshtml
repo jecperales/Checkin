@@ -834,7 +834,7 @@
         document.getElementById("clock").innerHTML = (hours + ":" + minutes + ":" + seconds + meridiem);
     }
 
-    setInterval('clock()', 1000);
+    setInterval('clock()', 1000000);
 
     $(function () {
         var actualizarHora = function () {
@@ -880,7 +880,7 @@
         };
 
         actualizarHora();
-        var intervalo = setInterval(actualizarHora, 1000);
+        var intervalo = setInterval(actualizarHora, 1000000);
     });
 </script>
 
@@ -1035,7 +1035,8 @@
 
     function regasistencias() {
 
-        var d = new Date().toISOString();
+        //var d = new Date().toISOString();
+        var d = new Date().toISOString().substring(0, 10) + " " + new Date().toTimeString().split(' ')[0];
 
         var control = {
             latitud: latitud,
@@ -1054,17 +1055,34 @@
                 content: "application/json; charset=utf-8",
                 dataType: "json",
                 data: control,
-                success: function (data) {
-                    if (data) {
+            success: function (data) {
+                    //1 == Registro insertado exitosamente
+                    //-1 == Yahay un registro existente, no se insertan registro duplicados
+
+                    if (data == "1") {
 
                         swal("Correcto.", "Asistencia registrada", "success");
 
                         var alert = document.getElementById("alertEntrada");
                         var registrarEntradaBtn = document.getElementById("registrarEntradaBtn");
-                        var fechaEntrada= new Date().toLocaleString();
+                        var fechaEntrada = new Date().toISOString().substring(0, 10) + " " + new Date().toTimeString().split(' ')[0];
 
                         registrarEntradaBtn.disabled = true;
                         document.getElementById("pFechaHoraEntrada").innerHTML = fechaEntrada;
+
+                        if (alert.style.display === "none") {
+                            alert.style.display = "block";
+                        }
+                    }
+                    else
+                    {
+                        swal("INFO.", "Ya hay un regsitro existente ", "info");
+
+                        var alert = document.getElementById("alertEntrada");
+                        var registrarEntradaBtn = document.getElementById("registrarEntradaBtn");                        
+
+                        registrarEntradaBtn.disabled = true;
+                        document.getElementById("pFechaHoraEntrada").innerHTML = data;
 
                         if (alert.style.display === "none") {
                             alert.style.display = "block";
@@ -1080,7 +1098,8 @@
 
     function registrarSalida() {
 
-        var c = new Date().toISOString();
+        //var c = new Date().toISOString();
+        var c = new Date().toISOString().substring(0, 10) + " " + new Date().toTimeString().split(' ')[0];
 
         var control = {
                 latitud: 0,
@@ -1105,7 +1124,7 @@
 
                         var alert = document.getElementById("alertSalida");
                         var registrarSalidaBtn = document.getElementById("registrarSalidaBtn");
-                        var fechaSalida = new Date().toLocaleString();
+                        var fechaSalida = new Date().toISOString().substring(0, 10) + " " + new Date().toTimeString().split(' ')[0];
 
                         registrarEntradaBtn.disabled = true;
                         document.getElementById("pFechaHoraSalida").innerHTML = fechaSalida;

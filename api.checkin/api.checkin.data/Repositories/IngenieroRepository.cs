@@ -43,9 +43,6 @@ namespace api.checkin.data.Repositories
                         suburb, town, state, cell_phone, user, password, id_profile, id_proyecto,
                         pais, pais_reporte FROM ingeniero WHERE id_ingeniero = @id";
 
-            //var result = db.QueryFirstOrDefaultAsync<Ingeniero>(sql, new { id });
-            //return result;
-
             return await db.QueryFirstOrDefaultAsync<Ingeniero>(sql, new { id });
         }
 

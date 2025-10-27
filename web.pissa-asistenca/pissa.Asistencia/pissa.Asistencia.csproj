@@ -129,6 +129,7 @@
     <Compile Include="Controllers\AsistenciaController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PerfilController.cs" />
+    <Compile Include="Controllers\TestingController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -702,6 +703,7 @@
     <Content Include="assets\js\pace.min.js" />
     <Content Include="assets\js\popper.min.js" />
     <Content Include="assets\js\sidebar-menu.js" />
+    <Content Include="assets\js\Testing\testing.js" />
     <Content Include="assets\plugins\Chart.js\Chart.min.js" />
     <Content Include="assets\plugins\Chart.js\chartjs-script.js" />
     <Content Include="assets\plugins\fullcalendar\css\fullcalendar.css" />
@@ -2919,6 +2921,7 @@
     <Content Include="Views\Asistencia\Charts.cshtml" />
     <Content Include="Views\Area\Index.cshtml" />
     <Content Include="Views\Shared\_TestLayout.cshtml" />
+    <Content Include="Views\Testing\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

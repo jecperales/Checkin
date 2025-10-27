@@ -39,9 +39,13 @@ export class LoginPage implements OnInit {
               private route: Router, 
               private loadingCtrl: LoadingController,
               private loader: IonLoaderService) {
+
+    this.uid = "";
+    this.password = "";
   }
 
   ngOnInit() {
+
   }
 
 
@@ -59,7 +63,8 @@ export class LoginPage implements OnInit {
   }
   
   login(uid: string, password: string)
-  {
+  {    
+
     if(uid == undefined || uid.trim()=="")
     {
       this.presentAlert("Datos no válidos.", "", "Introduzca un nombre de usuario"); 
@@ -77,12 +82,16 @@ export class LoginPage implements OnInit {
         {
           next: (res) =>{
             if(res){
+              console.log("Response...")
+              console.log(res);
               this.engineer = res;                    
   
               //Cargamos la pagina del mapa y enviamos los datos del ingeniero logueado
               this.route.navigate(['/asistencia'],{state: this.engineer});
             }
             else{
+              console.log("NO response...")
+              console.log(res);
               this.presentAlert("Autenticación.", "Credenciales incorrectas.", "Usuario y/o contraseña incorrectos.");            
             }    
           },

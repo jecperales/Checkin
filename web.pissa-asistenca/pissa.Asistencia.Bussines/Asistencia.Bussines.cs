@@ -35,7 +35,8 @@ namespace pissa.Asistencia.Bussines
             return new Dao.Asistencia().GeneraListaAsistenciaCliente(fecha1, fecha2, idProyecto);
         }
 
-        public control_asistencia regasistencias(control_asistencia control)
+        //public control_asistencia regasistencias(control_asistencia control)
+        public string regasistencias(control_asistencia control)
         {
             return new Dao.Asistencia().regasistencias(control);
         }
