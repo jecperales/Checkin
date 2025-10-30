@@ -1,5 +1,7 @@
 {
   "name": "mobile-checkin",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

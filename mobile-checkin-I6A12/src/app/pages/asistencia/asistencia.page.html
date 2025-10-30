@@ -8,7 +8,10 @@
       <ion-label>{{this.engineer.name}} {{this.engineer.last_name_p}} {{this.engineer.last_name_m}}</ion-label>
     </ion-chip>
 
-    <!-- <label slot="end" class="ion-padding">Log out</label> -->
+    <ion-chip color="secondary">
+      <ion-label>V 1.0.5</ion-label>
+    </ion-chip>
+
     <ion-button slot="end" fill="clear" routerLink="/login">Log out</ion-button>
   </ion-toolbar>
 </ion-header>
@@ -47,7 +50,10 @@
     </ion-thumbnail> -->
     <ion-icon name="arrow-forward-outline" color="success" class=".icon-padding"></ion-icon>
     <ion-label>
-      {{this.dateCheckin}}
+      {{this.dateCheckin}} 
+    </ion-label>
+    <ion-label *ngIf="this.asistence.id_asistencia > 0">
+      {{this.asistence.latitud}} , {{this.asistence.longitud}}
     </ion-label>
     <!-- <ion-button slot="end" fill="clear">
       <ion-icon slot="icon-only" name="{{this.iconIn}}" color="{{this.iconColorOut}}"></ion-icon>
@@ -60,7 +66,10 @@
     </ion-thumbnail> -->
     <ion-icon name="arrow-back-outline" color="danger" class=".icon-padding"></ion-icon>
     <ion-label>
-      {{this.dateCheckout}}
+      {{this.dateCheckout }} 
+    </ion-label>
+    <ion-label *ngIf="this.asistence.id_asistencia > 0">
+      {{this.asistence.s_latitud}} , {{this.asistence.s_longitud}}
     </ion-label>
     <!-- <ion-button slot="end" fill="clear">
       <ion-icon slot="icon-only" name="{{this.iconOut}}" color="{{this.iconColorOut}}"></ion-icon>

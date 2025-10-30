@@ -1,0 +1,22 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_TestLayout.cshtml";
+}
+
+
+<div class="container-fluid" ng-app="myApp" ng-controller="myCtrl">
+
+    <h1>Testing page</h1>
+
+    <div class="row col-12">
+        @*<input class="am-button bg-primary" type="button" value="Entrada"/>
+        <input class="bg-info" type="button" value="Salida"/>*@
+        <button class="btn btn-success col-6" ng-click="gEntrada()">Entrada</button>
+        <button class="btn btn-info col-6" ng-click="gSalida()">Salida</button>
+    </div>
+
+
+</div>
+<script src="~/assets/js/Testing/testing.js"></script>
+

@@ -4,6 +4,7 @@ import { AsistenciaService } from '../../services/asistencia.service';
 import { AlertController, ToastController } from '@ionic/angular';
 import { Capacitor } from '@capacitor/core';
 import { PermissionsService } from '../../services/permissions.service';
+import { IonLoaderService } from 'src/app/services/ion-loader.service';
 
 import {
   GoogleMap,
@@ -26,6 +27,10 @@ export class AsistenciaPage implements OnInit {
   map!: GoogleMap;
   @ViewChild(MapInfoWindow, { static: false })
   info!: MapInfoWindow;
+
+  counter: number = 0;
+
+  canUseGPS: boolean = false;
 
   address = '';
   latitude!: any;
@@ -79,7 +84,7 @@ export class AsistenciaPage implements OnInit {
 
   now = new Date();
 
-  dateCheckin: string = "Aun no registra su entrada";
+  dateCheckin: string = "Aun no registra su entrada.";
   dateCheckout: string = "Aun no registra su salida.";
 
   iconIn: string = "skull";
@@ -98,7 +103,8 @@ export class AsistenciaPage implements OnInit {
     private geoCoder: MapGeocoder, 
     private apiAsistance: AsistenciaService,
     private alertCtrl: AlertController,
-    private permissions:PermissionsService) {
+    private permissions:PermissionsService,
+    private loader: IonLoaderService) {
 
     this.engineer = this.router.getCurrentNavigation()?.extras.state;
 
@@ -115,13 +121,73 @@ export class AsistenciaPage implements OnInit {
       this.router.navigate(['/login']);
     }
     else{
-      this.checkPermissions();
+      this.loader.showLoading("Consultando permisos...").then(() => {      
+        this.checkPerm();
+        this.loader.hideLoader();        
+      });
+
       this.getTodayAsistence();
     }
 
   }
 
-  getTodayAsistence()
+  async checkPerm()
+  {
+    var hasPermission = await this.permissions.checkGPSPermission();
+    var canUseGPS = await this.permissions.askToTurnOnGPS();
+    console.log("asistencia.page.ts.checkPerm() => _canUseGPS...");
+    console.log(canUseGPS);
+
+    var res = false;
+
+    if(hasPermission)
+    {
+      if(Capacitor.isNativePlatform())
+      {
+        if(canUseGPS)
+        {
+          res = true;
+        }
+        // else
+        // {
+        //   this.presentAlert("Devices", "GPS", "Por favor encienda so GPS y conceda los permisos para acceder a su ubicacion.");
+        //   res = false;
+        // }
+      }
+      else
+      {
+        res = true;        
+      }
+    }
+    else
+    {
+      var permission = await this.permissions.requestGPSPermission();
+
+      if(permission === "CAN_REQUEST" || permission === "GOT_PERMISSION")
+      {
+        if(canUseGPS)
+        {
+          res = true;
+        }
+        // else
+        // {
+        //   this.presentAlert("Devices", "GPS", "Por favor encienda so GPS y conceda los permisos para acceder a su ubicacion.");
+        //   res = false;
+        // }
+      }
+      else
+      {
+        await this.presentAlert("Permisos", "Acceso denegado - Negaciones: " + this.counter, "El usuario ha denegado los permisos de geolocalizacion. Puede que sea necesario activarlos manualmente.");          
+        res = false;        
+      }
+
+    }
+
+    return res;
+
+  }
+ 
+  async getTodayAsistence()
   {
     
     let date = new Date()
@@ -131,11 +197,14 @@ export class AsistenciaPage implements OnInit {
 
     let formattedDate = year.toString() + "-" + (month < 10 ? '0'+ month.toString():month.toString()) + "-" + (day < 10 ? '0' + day.toString() : day.toString());
 
-    this.apiAsistance.getTodayAsistence(formattedDate, this.engineer.id_ingeniero).subscribe(
+    await this.apiAsistance.getTodayAsistence(formattedDate, this.engineer.id_ingeniero).subscribe(
       {
         next:(res) => {
           if(res){
             this.asistence = res;
+            console.log("Asistencias del dia:");
+            console.log(res);
+            console.log(this.asistence);
 
             this.dateCheckin = this.asistence.fecha_hora_registro.toString().replace("T"," ");
             this.dateCheckout = this.asistence.fecha_hora_salida.toString().replace("T"," ");
@@ -152,120 +221,146 @@ export class AsistenciaPage implements OnInit {
           else
           {
             console.log("No hay datos de asistencia");
+            console.log(res);            
             this.asistence.id_asistencia = 0;
-
+            console.log(this.asistence);
           }
-
         },
         error: (err) => {
           console.log(err);
+        },
+        complete: () => { 
+          console.log("getTodayAsistance complete...");
+
         }
       }
     );
   }
 
-  saveInOut(){
+  async  saveInOut(){
     
     if(this.asistence.id_asistencia == 0)//Insertamos un registro nuevo
     {
-      //this.getCurrentPosition();
-      this.checkPermissions();
+      this.loader.showLoading("Obteniendo Coordenadas...")
+      .then(async () => {      
+        
+        var permissionsOk = await this.checkPerm();
+        
+        if(permissionsOk)
+        {
 
-      
-        this.asistence.latitud = this.latitude;
-        this.asistence.longitud = this.longitude;
-        this.asistence.fecha_hora_movil = this.GetFormattedDate(new Date());
-        this.asistence.fecha_hora_registro = this.asistence.fecha_hora_movil;
-        this.asistence.id_ingeniero = this.engineer.id_ingeniero;
-        this.asistence.fecha_hora_salida="0001-01-01T00:00:00";
-        this.asistence.s_latitud = 0;
-        this.asistence.s_longitud = 0;
+          let coordenadas = await this.getCurrentPosition();
 
-        //Reseteamos la bandera
-        this.permisosOk= false;
+          this.asistence.latitud = coordenadas.latitud;//this.latitude;
+          this.asistence.longitud = coordenadas.longitud;//this.longitude;
+          this.asistence.fecha_hora_movil = this.GetFormattedDate(new Date());
+          this.asistence.fecha_hora_registro = this.asistence.fecha_hora_movil;
+          this.asistence.id_ingeniero = this.engineer.id_ingeniero;
+          this.asistence.fecha_hora_salida="0001-01-01T00:00:00";
+          this.asistence.s_latitud = 0;
+          this.asistence.s_longitud = 0;
 
-        this.apiAsistance.postAsistence(this.asistence).subscribe(
-          {
-            next: (res) =>{
-              if(res){
-                this.presentAlert("Asistencia","Entrada","Su entrada ha sido registrada con éxito");
+          this.apiAsistance.postAsistence(this.asistence).subscribe(
+            {
+              next: (res) =>{
+                if(res == 1){
+                  this.presentAlert("Asistencia","Entrada","Su entrada ha sido registrada con éxito");
 
-                this.dateCheckin = this.asistence.fecha_hora_registro.toString().replace("T"," ")
-                this.inOut = "Salida"
+                  this.dateCheckin = this.asistence.fecha_hora_registro.toString().replace("T"," ")
+                  this.inOut = "Salida"
 
-                this.getTodayAsistence();
-              } 
-            },
-            error: (err) =>{
-              this.presentAlert("Error Exception.", "Error desconocido", "Ocurrio un error al registrar si asitencia. Favor de contactar a su administrador.");
+                  this.getTodayAsistence();
+                } 
+                else if(res == -1){
+                  this.presentAlert("Asistencia","Entrada","Ya hay un registro previo existente.");
+                  this.inOut;
+                  this.getTodayAsistence()
+                }
+                else{
+                  this.presentAlert("Asistencia","Entrada","El registro no se guardo, Intente de nuevo");
+                }
+              },
+              error: (err) =>{
+                this.presentAlert("Error Exception.", "Error desconocido", "Ocurrio un error al registrar si asitencia. Favor de contactar a su administrador." + err);
+              },
+              complete: () => {
+                console.log("saveInOut complete...");
+              }
             }
-          }
-        );
-   
+          );
+        }
+        else
+        {
+          this.loader.hideLoader(); 
+          return;
+        } 
+
+        this.loader.hideLoader();        
+      })
+      .catch((err) => {
+        console.log("Error al guardar la entra: " + err);
+
+      })
+      .finally(() => {
+        this.loader.hideLoader(); 
+
+      });
+           
     }
     else//Actualizamos el registro
     {
-      //this.getCurrentPosition();
-      this.checkPermissions();
-
-      if(this.permisosOk){
-        this.asistence.fecha_hora_salida = this.GetFormattedDate(new Date());
-        this.asistence.s_latitud = this.latitude;
-        this.asistence.s_longitud = this.longitude;
-
-        console.log(this.asistence);
-
-        this.apiAsistance.putAsistencia(this.asistence).subscribe({
-          next: (res) => {
-            this.presentAlert("Asistencia", "Salida", "Su salida ha sido registrada con éxito");
-            this.dateCheckout = this.asistence.fecha_hora_salida.toString().replace("T"," ")
-          },
-          error: (err) => {
-            console.log(err);
-            this.presentAlert("Error Exception.", "Error desconocido", "Ocurrio un error al registrar su asitencia. Favor de contactar a su administrador.");
-          }
-        });
-      }
-      else{
-        this.presentAlert("Permisos no otorgados", "Registro no guardado", "Para poder registrar tu entrada y salida necesitas otorgar los permisos de geolocalizacion");
-      }
-
-      
-    }
-
-  }
-
-  async checkPermissions(){
-    const hasPermission = await this.permissions.checkGPSPermission();
-    if(hasPermission){
-      if(Capacitor.isNativePlatform()){
-        const canUseGPS = await this.permissions.askToTurnOnGPS();
+       
+      this.loader.showLoading("Obteniendo Coordenadas...").then(async () => {      
         
-        this.postGPSPermission(canUseGPS);
-      }
-      else{
-        this.postGPSPermission(true);
-      }
-    }
-    else{
-      const permission = await this.permissions.requestGPSPermission();
-      if(permission === "CAN_REQUEST" || permission === "GOT_PERMISSION"){
-        if(Capacitor.isNativePlatform()){
-          const canUseGPS = await this.permissions.askToTurnOnGPS();
-          this.postGPSPermission(canUseGPS);
+        var permissionsOk = await this.checkPerm();
+        
+        if(permissionsOk)
+        {
+          let coordenadas = await this.getCurrentPosition();
+
+          this.asistence.fecha_hora_salida = await this.GetFormattedDate(new Date());
+          this.asistence.s_latitud = coordenadas.latitud;
+          this.asistence.s_longitud = coordenadas.longitud;
+
+          console.log(this.asistence);
+
+          await this.apiAsistance.postAsistencia(this.asistence).subscribe({
+            next: (res) => {
+              if(res){
+                this.presentAlert("Asistencia", "Salida", "Su salida ha sido registrada con éxito");
+                this.dateCheckout = this.asistence.fecha_hora_salida.toString().replace("T"," ")
+              }
+              else{
+                this.presentAlert("Asistencia", "Salida", "No se registro su salid. Server response: " + res)
+              }
+              
+            },
+            error: (err) => {
+              console.log(err);
+              this.presentAlert("Error Exception.", "Error desconocido", "Ocurrio un error al registrar su salida. Favor de contactar a su administrador. " + err);
+            }
+          });
         }
-        else{
-          this.postGPSPermission(true);
+        else
+        {
+          this.loader.hideLoader(); 
+          return;
         }
-      }
-      else{
-        await this.presentAlert("Permisos", "Acceso denegado", "El usuario ha denegado los permisos de geolocalizacion.");
-      }
+
+        this.loader.hideLoader();        
+      }).
+      catch((err) => {
+        console.log(err);
+      }). 
+      finally(() => {
+        this.loader.hideLoader();
+      });
+          
     }
-  }
+  }  
 
   async postGPSPermission(canUseGPS: boolean) {
-    if (canUseGPS) { this.getCurrentPosition(); }
+    if (canUseGPS) { await this.getCurrentPosition(); }
     else {
       // await Toast.show({
       //   text: 'Please turn on GPS to get location'
@@ -274,24 +369,36 @@ export class AsistenciaPage implements OnInit {
     }
   }
 
-  getCurrentPosition(){
-    navigator.geolocation.getCurrentPosition((position) => {
-      this.latitude = position.coords.latitude;
-      this.longitude = position.coords.longitude;
-      // console.log("latitud: " + this.latitude + " - " +"longitud: " + this.longitude);
+  async getCurrentPosition(): Promise<{latitud: number, longitud: number}>{
+    return new Promise((resolve, reject) => {
+      if(!navigator.geolocation){
+        reject(new Error("La geolocalizacion no esta permitida en este navegador"));
+      }
+      else{
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            this.center = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                  };
+            // Set marker position
+            this.setMarkerPosition(position.coords.latitude, position.coords.longitude);              
+            this.getAddress(position.coords.latitude, position.coords.longitude); 
 
-      this.center = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-      };
-        // Set marker position
-      this.setMarkerPosition(this.latitude, this.longitude);
-  
-      this.getAddress(this.latitude, this.longitude);          
+            resolve({
+              latitud: position.coords.latitude,
+              longitud: position.coords.longitude
+            });
+          },
+          (error) => {
+            reject(error);
+          }
+        );
+      }
     });
   }
 
-  setMarkerPosition(latitude: any, longitude: any) {
+  async setMarkerPosition(latitude: any, longitude: any) {
     // Set marker position
     this.markers = [
       {
@@ -364,7 +471,7 @@ export class AsistenciaPage implements OnInit {
       backdropDismiss: false,
       header: header,
       subHeader: subHeader,
-      message: message,
+      message: message,      
       buttons: ['OK'],
     });
 

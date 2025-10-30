@@ -1,9 +1,10 @@
 ﻿@{ ViewBag.Title = "chekAsistencia"; }
 
-
-<script src="~/Scripts/jquery-3.3.1.min.js"></script>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <link href='https://fonts.googleapis.com/css?family=Raleway:600,700' rel='stylesheet' type='text/css'>
+
+@*<script src="~/Scripts/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>*@
+
 <style>
 
     * {
@@ -707,16 +708,13 @@
             transform: scale(1.1);
         }
 </style>
-<div class="">
+<div class="container-fluid">
 
     <!-- Jumbotron -->@*https://mdbcdn.b-cdn.net/img/Photos/Others/forest2.webp*@
     <div class="card card-image" style="background-image: url('../../assets/images/gallery/2817288.jpg'); background-size: cover; ">
         <div class="text-black-50 text-center rgba-stylish-strong py-5 ">
             <div class="py-5">
-
-
                 <!-- Content -->
-                @*<h5 class="h5 orange-text"><i class="fas fa-camera-retro"></i> Photography</h5>*@
                 <div class="fecha">
                     <span id="diaSemana" class="diaSemana"></span>
                     <span id="dia" class="dia"></span>
@@ -733,59 +731,54 @@
 
                 </div>
 
-                @*<a class="btn peach-gradient"><i class="fas fa-clone left"></i> View project</a>*@
                 <div class="row col-lg-12" style="padding-right:0.0rem">
 
-                    <div class="col-lg-6" style="padding-right:0.0rem">                        
-                        @{
-                            var fecha_hora_movil = ViewBag.fecha_hora_salida.ToString();
+                    <div class="col-lg-6" style="padding-right:0.0rem">
+                        @{ var fecha_hora_movil = "";
+                            if (ViewBag.fecha_hora_movil != "")
+                            {
+                                fecha_hora_movil = ViewBag.fecha_hora_movil;
+                            }
+
 
                             if (!fecha_hora_movil.ToString().Equals(""))
                             {
-                                <button type="button" id="registrarEntradaBtn" onclick="regasistencias()" class="btn btn-lg btn-dark col-12" disabled>Registrar Entrada</button>
-                                <div class="alert alert-success" role="alert" id="alertEntrada" >
+                <button type="button" id="registrarEntradaBtn" onclick="requestGeolocation('regasistencias')" class="btn btn-lg btn-dark col-12" disabled>Registrar Entrada</button>
+                                <div class="alert alert-success" role="alert" id="alertEntrada">
                                     <h4 class="alert-heading" style="font-size:3vw">Bien hecho!</h4>
                                     <p style="font-size:2vw">Ya has registrado tu hora de entrada.</p>
                                     <hr>
                                     <p class="mb-0" id="pFechaHoraEntrada" style="font-size:2vw">@ViewBag.fecha_hora_movil </p>
-                                </div>
-                            }
+                                </div> }
                             else
                             {
-                                <button type="button" id="registrarEntradaBtn" onclick="regasistencias()" class="btn btn-lg btn-info col-12" >Registrar Entrada</button>
+                <button type="button" id="registrarEntradaBtn" onclick="requestGeolocation('regasistencias')" class="btn btn-lg btn-info col-12">Registrar Entrada</button>
                                 <div class="alert alert-success" role="alert" id="alertEntrada" style="display:none">
                                     <h4 class="alert-heading" style="font-size:3vw">Bien hecho!</h4>
                                     <p style="font-size:2vw">Ya has registrado tu hora de entrada.</p>
                                     <hr>
-                                    <p class="mb-0" id="pFechaHoraEntrada" style="font-size:2vw">@ViewBag.fecha_hora_movil </p>
-                                </div>
-                            }
-
-                         }                      
+                                    <p class="mb-0" id="pFechaHoraEntrada" style="font-size:2vw">@ViewBag.fecha_hora_movil</p>
+                                </div> } }
                     </div>
                     <div class="col-lg-6" style="padding-right:0.0rem">
-                        @{ 
-                            if (!ViewBag.fecha_hora_salida.ToString().Equals("") && !ViewBag.fecha_hora_salida.ToString().Equals("01/01/0001 12:00:00 a. m."))
+                        @{ if (!ViewBag.fecha_hora_salida.ToString().Equals("") && !ViewBag.fecha_hora_salida.ToString().Equals("01/01/0001 12:00:00 a. m."))
                             {
-                                <button type="button" id="registrarSalidaBtn" onclick="registrarSalida()" class="btn btn-lg btn-dark col-12" disabled>Registrar Salida</button>
+                <button type="button" id="registrarSalidaBtn" onclick="requestGeolocation('registrarSalida')" class="btn btn-lg btn-dark col-12" disabled>Registrar Salida</button>
                                 <div class="alert alert-success" role="alert" id="alertSalida">
                                     <h4 class="alert-heading" style="font-size:3vw">Bien hecho!</h4>
                                     <p style="font-size:2vw"> Ya has registrado tu hora de salida.</p>
                                     <hr>
                                     <p class="mb-0" id="pFechaHoraSalida" style="font-size:2vw">@ViewBag.fecha_hora_salida</p>
-                                </div> 
-                            }
+                                </div> }
                             else
-                            { 
-                                <button type="button" id="registrarSalidaBtn" onclick="registrarSalida()" class="btn btn-lg btn-danger col-12">Registrar Salida</button>
+                            {
+                <button type="button" id="registrarSalidaBtn" onclick="requestGeolocation('registrarSalida')" class="btn btn-lg btn-danger col-12">Registrar Salida</button>
                                 <div class="alert alert-success" role="alert" id="alertSalida" style="display:none">
                                     <h4 class="alert-heading" style="font-size:3vw">Bien hecho!</h4>
                                     <p style="font-size:2vw"> Ya has registrado tu hora de salida.</p>
                                     <hr>
-                                    <p class="mb-0" id ="pFechaHoraSalida" style="font-size:2vw">@ViewBag.fecha_hora_salida</p>
-                                </div> 
-                            }
-                        }                       
+                                    <p class="mb-0" id="pFechaHoraSalida" style="font-size:2vw">@ViewBag.fecha_hora_salida</p>
+                                </div> } }
                     </div>
                 </div>
             </div>
@@ -795,8 +788,6 @@
 
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-Knob/1.2.13/jquery.knob.min.js"></script>
 
 <script>
 
@@ -843,7 +834,7 @@
         document.getElementById("clock").innerHTML = (hours + ":" + minutes + ":" + seconds + meridiem);
     }
 
-    setInterval('clock()', 1000);
+    setInterval('clock()', 1000000);
 
     $(function () {
         var actualizarHora = function () {
@@ -888,9 +879,8 @@
 
         };
 
-
         actualizarHora();
-        var intervalo = setInterval(actualizarHora, 1000);
+        var intervalo = setInterval(actualizarHora, 1000000);
     });
 </script>
 
@@ -898,64 +888,184 @@
 <script>
     var latitud = 0;
     var longitud = 0;
+    var funcionName = "";
+    var estado = "";
 
-    if ("geolocation" in navigator) { 
-        
-        navigator.geolocation.getCurrentPosition(function (position) {
-            latitud = position.coords.latitude;
-            longitud = position.coords.longitude;
-            console.log("Found your location nLat : " + position.coords.latitude + " nLang :" + position.coords.longitude);
-            console.log("LATITUD: " + latitud + " - LONGITUD: " + longitud)
-        });
-    } else {
-       // console.log("El explorador no soporta la geolocalizacion!");
+    function checkGeolocationPermissionOLD_NO_USAR (funcionAllamar) {
+
+        if ("geolocation" in navigator) {
+            //Verificar si los permisos de ubicacion estan concedidos
+            navigator.permissions.query({ name: 'geolocation' }).then(function (res) {
+                if (res.state === 'granted') {
+                    //Los permisos de ubicacion estan concedidos
+                    navigator.geolocation.getCurrentPosition(function (position) {
+                        latitud = position.coords.latitude;
+                        longitud = position.coords.longitude;
+                    });
+
+                    if (funcionAllamar === "regasistencias") {
+                        regasistencias();
+                    }
+                    else if (funcionAllamar === "registrarSalida")
+                    {
+                        registrarSalida();
+                    }
+                }
+
+                if (res.state === 'prompt') {
+                    //Los permisos no estan concedidos pero se pueden solicitar al usuario
+                    navigator.geolocation.getCurrentPosition(function (position) {
+                        latitud = position.coords.latitude;
+                        longitud = position.coords.longitude;
+                    });
+                    res.onchange = function () {
+                        //Verifica si el usuario concede los permisos
+                        if (this.state === 'granted') {
+
+                            navigator.geolocation.getCurrentPosition(function (position) {
+                                latitud = position.coords.latitude;
+                                longitud = position.coords.longitude;
+
+                            });
+
+                            if (funcionAllamar === "regasistencias") {
+                                regasistencias();
+                            }
+                            else if (funcionAllamar === "registrarSalida") {
+                                registrarSalida();
+                            }
+
+                        }
+                        else {
+                            swal("El usuario no concedio los permisos de ubicacion", "PERMISOS", "error");
+                        }
+                    }
+                }
+                else {
+                    //Los permisos de ubicacion no estan concedidos y no se pueden solicitar
+                    swal("Los permisos de ubicacion no estan concedidos y no se puden solicitar. Activelos manualmente!", "PERMISOS", "warning");
+                }
+            });
+        }
+        else {
+            //El navegar no soportada por este navegador
+            swal("Geolocalizacion no soportada por este navegador", "PERMISOS", "error");
+        }
+
     }
 
+    function handleChange(permissionName, newState) {
+
+        if ('geolocation' in navigator) {
+            if (newState === 'granted') {
+                swal("Los permisos de ubicacion fueron concedidos correctamente. Ya puede rgistrar su asistencia", "PERMISOS", "success");
+            }
+            else if (newState === 'prompt') {
+                swal("Los permisos de ubicacion no fueron concedidos. Se solicitaran la proxima vez que registre su asistencia", "PERMISOS", "warning");
+            }
+            else {
+                //Los permisos de ubicacion no estan concedidos y no se pueden solicitar
+                swal("Los permisos de ubicacion no fueron concedidos y no se puden solicitar. Activelos manualmente!", "PERMISOS", "error");
+            }
+        }
+        else {
+            //El navegar no soportada por este navegador
+            swal("Geolocalizacion no soportada por este navegador", "PERMISOS", "error");
+        }
+    }
+
+    function checkGeolocationPermission(permissionName, descriptor) {
+        try {
+
+            if ('geolocation' in navigator) {
+
+                navigator.permissions.query(Object.assign({ name: permissionName }, descriptor)).then(function (permission) {
+
+                    estado = permission.state;
+
+                    if (permission.state === 'granted') {
+
+                        navigator.geolocation.getCurrentPosition(
+                            function (position) {
+                                latitud = position.coords.latitude;
+                                longitud = position.coords.longitude;
+
+                                if (funcionName === "regasistencias") {
+                                    regasistencias();
+                                }
+                                else if (funcionName === "registrarSalida") {
+                                    registrarSalida();
+                                }
+
+                            }
+                        );
+
+                    }
+                    else if (permission.state === 'prompt') {
+
+                        navigator.geolocation.getCurrentPosition(noop);
+                    }
+                    else {
+                        //Los permisos de ubicacion no estan concedidos y no se pueden solicitar
+                        swal("Los permisos de ubicacion no fueron concedidos y no se puden solicitar. Activelos manualmente!", "PERMISOS NO CONCEDIDOS", "warning");
+                    }
+
+                    permission.addEventListener('change', function (e) {
+                        handleChange(permissionName, permission.state);
+                    });
+
+                });
+            }
+            else {
+                //El navegar no soportada por este navegador
+                swal("Geolocalizacion no soportada por este navegador", "PERMISOS", "error");
+            }
+        }
+        catch (e) {
+            console.log(e);
+        }
+    }
+
+    function requestGeolocation(funcDesc) {
+        checkGeolocationPermission("geolocation");
+        funcionName = funcDesc;
+    }
+
+    var noop = function () { }
 
     function regasistencias() {
-        //Probando obtener la hora del explorador desde javascript
-        //var d = new Date().toLocaleTimeString(
-        //    'es-MX',
-        //    {
-        //        hour12: false,
-        //        hour: "numeric",
-        //        minute: "numeric",
-        //        second: "numeric"
-        //    }
-        //);
-        
 
-        var d = new Date().toLocaleString('es-MX')
-
-        console.log("Hora del explorador: ");
-        console.log(d);
-
+        //var d = new Date().toISOString();
+        var d = new Date().toISOString().substring(0, 10) + " " + new Date().toTimeString().split(' ')[0];
 
         var control = {
-                latitud: latitud,
-                longitud: longitud,
-                fecha_hora_movil: d,
-                fecha_hora_registro: d,
-                id_ingeniero: 0,
-                fecha_hora_salida: '',
-                s_latitud : 0,
-                s_longitud :0
-            };
+            latitud: latitud,
+            longitud: longitud,
+            fecha_hora_movil: d,
+            fecha_hora_registro: d,
+            id_ingeniero: 0,
+            fecha_hora_salida: '',
+            s_latitud : 0,
+            s_longitud :0
+        };
 
-            $.ajax({
+        $.ajax({
                 type: "POST",
                 url: "@Url.Action("regasistencias", "Asistencia")",
                 content: "application/json; charset=utf-8",
                 dataType: "json",
                 data: control,
-                success: function (d) {
-                    if (d) {
+            success: function (data) {
+                    //1 == Registro insertado exitosamente
+                    //-1 == Yahay un registro existente, no se insertan registro duplicados
+
+                    if (data == "1") {
 
                         swal("Correcto.", "Asistencia registrada", "success");
 
                         var alert = document.getElementById("alertEntrada");
                         var registrarEntradaBtn = document.getElementById("registrarEntradaBtn");
-                        var fechaEntrada= d;
+                        var fechaEntrada = new Date().toISOString().substring(0, 10) + " " + new Date().toTimeString().split(' ')[0];
 
                         registrarEntradaBtn.disabled = true;
                         document.getElementById("pFechaHoraEntrada").innerHTML = fechaEntrada;
@@ -964,20 +1074,32 @@
                             alert.style.display = "block";
                         }
                     }
+                    else
+                    {
+                        swal("INFO.", "Ya hay un regsitro existente ", "info");
+
+                        var alert = document.getElementById("alertEntrada");
+                        var registrarEntradaBtn = document.getElementById("registrarEntradaBtn");                        
+
+                        registrarEntradaBtn.disabled = true;
+                        document.getElementById("pFechaHoraEntrada").innerHTML = data;
+
+                        if (alert.style.display === "none") {
+                            alert.style.display = "block";
+                        }
+                    }
                 },
                 error: function (xhr, textStatus, errorThrown) {
-                    alert('Error!!');
+                    alert('Error!!: ' + errorThrown );
                 }
-            });
+        });
 
     }
 
     function registrarSalida() {
 
-        var c = new Date().toLocaleDateString('es-MX');
-
-        console.log("Hora del explorador: ");
-        console.log(c);
+        //var c = new Date().toISOString();
+        var c = new Date().toISOString().substring(0, 10) + " " + new Date().toTimeString().split(' ')[0];
 
         var control = {
                 latitud: 0,
@@ -988,26 +1110,21 @@
                 fecha_hora_salida : c,
                 s_latitud : latitud,
                 s_longitud: longitud
-            };
-        console.log("COORDENADAS A ENVIAR");
-        console.log(control);
+        };
 
-            $.ajax({
+        $.ajax({
                 type: "POST",
                 url: "@Url.Action("registraSalida", "Asistencia")",
                 content: "application/json; charset=utf-8",
                 dataType: "json",
                 data: control,
-                success: function (d) {
-                    console.log(d);
-                    if (d == 0) {
-                        swal("Warning.", "No hay registro del dia de hoy. Asegurate que hayas registrado tu entrada primero!.", "info");
-                    } else if (d == 1) {
+                success: function (data) {
+                    if (data != "0") {
                         swal("Correcto.", "Salida regtistrada", "success");
 
                         var alert = document.getElementById("alertSalida");
                         var registrarSalidaBtn = document.getElementById("registrarSalidaBtn");
-                        var fechaSalida ='@DateTime.Now';
+                        var fechaSalida = new Date().toISOString().substring(0, 10) + " " + new Date().toTimeString().split(' ')[0];
 
                         registrarEntradaBtn.disabled = true;
                         document.getElementById("pFechaHoraSalida").innerHTML = fechaSalida;
@@ -1017,20 +1134,18 @@
                         if (alert.style.display === "none") {
                             alert.style.display = "block";
                         }
-                        //else {
-                        //    x.style.display = "none";
-                        //}
 
-                    } else if (d == 2) {
-                        swal("Error","Hubo un error al consultar la base de datos. Intenta mas tarde!", "error")
+                    } else if (data == "0") {
+                        swal("Warning.", "No hay registro del dia de hoy. Asegurate que hayas registrado tu entrada primero!.", "info");
                     }
                 },
                 error: function (xhr, textStatus, errorThrown) {
                     alert('Error!!');
                 }
-            });
+        });
 
     }
 
 </script>
+
 

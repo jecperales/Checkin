@@ -7,6 +7,7 @@ import { HttpClient } from '@angular/common/http';
 export class AsistenciaService {
 
   urlApi = "http://189.203.240.97/api-asistencia-revp/api/";
+  //urlApi = "http://localhost:5292/api/";
 
   constructor(public http:HttpClient) { }
 
@@ -18,8 +19,8 @@ export class AsistenciaService {
     return this.http.post(this.urlApi + "Asistencia", asistence);
   }
 
-  putAsistencia(asistencia: any){
-    return this.http.put(this.urlApi + "Asistencia/Update/", asistencia);
+  postAsistencia(asistencia: any){
+    return this.http.post(this.urlApi + "Asistencia/Update/", asistencia);
   }
 
 }

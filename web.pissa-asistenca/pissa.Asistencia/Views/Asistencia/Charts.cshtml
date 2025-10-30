@@ -1,0 +1,92 @@
+﻿
+@using pissa.Asistencia.Models;
+@model tipoProyecto
+
+
+<div class="container-fluid" ng-app="myApp" ng-controller="myCtrl">
+
+    <div class="row container text-lg-center border-bottom col-lg-12">
+        <div class="row">
+            <div class="col align-self-center">
+                <h1>ESTADÍSTICAS</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-3">
+            <label>Fecha inicio</label>
+            <input type="date" id="fecha1" class="form-control" name="name" value="" />
+        </div>
+        <div class="col-md-3">
+            <label>Fecha fin</label>
+            <input type="date" id="fecha2" class="form-control" name="name" value="" />
+        </div>
+        @{
+            var rol = int.Parse(Session["Profile"].ToString());
+            if (rol != 2 || rol != 3)
+            {
+                <div class="col-md-2">
+                    <label>Proyecto</label>
+                    <select ng-model="proyectoDesc" class="form-control select" id="select2Multiple">
+                        <option value="">Selecciona una opcion...</option>
+                        <option ng-repeat="p in proyectosLst" title="{{p.Text}}" value="{{p.Value}}">{{p.Text}}</option>
+                    </select>
+                </div>
+
+            }
+        }
+
+
+        <div class="col-md-2" style="text-align:center;">
+            <br />
+            <button class="btn btn-info" ng-click="busca_asistencia()">
+                <i class="fa fa-search">Graficar</i>
+            </button>
+        </div>
+    </div>
+
+    <div class="card-deck mt-5">
+        <div class="card">
+            <h5 class="card-header text-muted">Sin Salida</h5>
+            <div class="card-body">
+                <canvas id="Grafica1"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <h5 class="card-header">Retardos</h5>
+            <div class="card-body">
+                <canvas id="Grafica2"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-deck  mt-lg-5">
+        <div class="card">
+            <h5 class="card-header">No cumple Horario</h5>
+            <div class="card-body">
+                <canvas id="Grafica3"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <h5 class="card-header">No registro entrada ni salida</h5>
+            <div class="card-body">
+                <canvas id="Grafica4"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <input id="profile" style="display:none" value="@ViewBag.profile">
+    <input id="proyectoId" style="display:none" value="@ViewBag.proyectoId">
+    <input id="pais-reporte" style="display:none" value="@ViewBag.pais_reporte">
+    <input id="fi" style="display:none" value="@ViewBag.fecha_inicio">
+    <input id="ff" style="display:none" value="@ViewBag.fecha_fin">
+
+</div>
+
+@*SE AGREGAN LOS SCRIPTS AL FINAL PARA QUE FUNCIONE EL TAG CANVAS*@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="~/assets/js/Asistencia/Charts.js"></script>

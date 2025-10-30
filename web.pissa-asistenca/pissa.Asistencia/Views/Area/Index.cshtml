@@ -1,0 +1,207 @@
+﻿@using pissa.Asistencia.Models;
+@model tipoProyecto
+
+@*<link href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.22.4/dist/bootstrap-table.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.22.4/dist/bootstrap-table.min.js"></script>*@
+
+<div class="container-fluid" ng-app="myApp" ng-controller="myCtrl">
+
+    <div class="row m-4 col-12">
+        <div class="row col-12 border-bottom">
+            <h1>Administración de Áreas</h1>
+        </div>
+
+        <div class="row col-12 mt-3">
+            <div class="col-3">
+                <label>Nombre Proyecto</label>
+                <input type="text" id="fecha1" class="form-control" name="name" value="" ng-model="proyecto.nombre_proyecto" />
+            </div>
+
+            <div class="col-2" style="text-align:center;">
+                <br />
+                <button class="btn-lg btn-primary" ng-click="saveUpdate()">
+                    <i class="fas fa-save"> {{btnUpdSave == 0 ? "Guardar" : "Actualizar"}}</i>
+                </button>
+            </div>
+        </div>
+
+        <div class="row col-12 mt-5">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped" id="AreasTbl">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Proyecto</th>
+                            <th>Estatus</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="{{p.id}}" ng-repeat="p in proyectosArr">
+                            <td class="col-4">{{p.nombre_proyecto}}</td>
+                            <td class="col-4">{{p.estatus == 1 ? "Activo" : "Inactivo"}}</td>
+                            <td class="col-4">
+                                <div style="float:left;width:35px; cursor: pointer;"><i class="fa fa-edit text-primary" title="Editar" data-toggle="tooltip" ng-click="getRowData(p)"></i></div>
+                                <div style="float:left;width:35px; cursor: pointer;"><i class="fa fa-search text-info" title="Info" data-toggle="tooltip" ng-click="showModal(p)"></i></div>
+                                <div style="float:left;width:35px; cursor: pointer;"><i class="fa fa-trash text-danger" title="Eliminar" data-toggle="tooltip" ng-click="eliminarProyecto(p)"></i></div>
+                            </td>
+                            @*<td style="visibility:hidden">{{p.id}}</td>*@
+                        </tr>
+
+                    </tbody>
+                </table>
+                <div style="text-align: center">
+                    <ul uib-pagination total-items="totalCount" ng-model="pageIndex" ng-change="pageChanged()" items-per-page="pageSizeSelected" direction-links="true" max-size="maxSize" class="pagination" boundary-links="true" rotate="false" num-pages="numPages"></ul>
+                </div>
+            </div>
+        </div>
+
+        <!--MODAL-->
+        <div class="modal fade" id="modalIngTable" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalTitle">Lista de Ingenieros</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Nombre</th>
+                                        <th>Apellido Paterno</th>
+                                        <th>Apellido Materno</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="i in ingenierosArr">
+                                        <td style="display: none">{{i.id_ingeniero}}</td>
+                                        <td>{{$index + 1}}</td>
+                                        <td>{{i.name}}</td>
+                                        <td>{{i.last_name_p}}</td>
+                                        <td>{{i.last_name_m}}</td>
+                                        <td>
+                                            <div style="float:left;width:35px; cursor: pointer;"><i class="fa fa-trash text-danger" title="Eliminar" data-toggle="tooltip" ng-click="eliminarIngeniero(i)"></i></div>
+                                        </td>
+                                    </tr>
+                                    <tr class="text-center" ng-If="ingenierosArr.length == 0">
+                                        <td colspan="5">No hay registros.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-outline-danger" ng-click="eliminarTodosLosIngenieros()">Borrar todo.</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!--<div class="row border-bottom col-12">        
+        <h1>Administración de Áreas</h1>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-3">
+            <label>Nombre Proyecto</label>
+            <input type="text" id="fecha1" class="form-control" name="name" value="" ng-model="proyecto.nombre_proyecto" />
+        </div>
+
+        <div class="col-md-2" style="text-align:center;">
+            <br />
+            <button class="btn-lg btn-primary" ng-click="saveUpdate()">
+                <i class="fas fa-save"> {{btnUpdSave == 0 ? "Guardar" : "Actualizar"}}</i>
+            </button>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="table-responsive">
+            <table class="table table-hover" id="AreasTbl">
+                <thead>
+                    <tr>
+                        <th>Proyecto</th>
+                        <th>Estatus</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="{{p.id}}" ng-repeat="p in proyectosArr">
+                        <td>{{p.nombre_proyecto}}</td>
+                        <td>{{p.estatus == 1 ? "Activo" : "Inactivo"}}</td>
+                        <td>
+                            <div style="float:left;width:35px; cursor: pointer;"><i class="fa fa-edit text-primary" title="Editar" data-toggle="tooltip" ng-click="getRowData(p)"></i></div>
+                            <div style="float:left;width:35px; cursor: pointer;"><i class="fa fa-search text-info" title="Info" data-toggle="tooltip" ng-click="showModal(p)"></i></div>
+                            <div style="float:left;width:35px; cursor: pointer;"><i class="fa fa-trash text-danger" title="Eliminar" data-toggle="tooltip" ng-click="eliminarProyecto(p)"></i></div>
+                        </td>
+                        <td style="visibility: hidden">{{p.id}}</td>
+                    </tr>
+
+                </tbody>
+            </table>
+            <div style="text-align: center">
+                <ul uib-pagination total-items="totalCount" ng-model="pageIndex" ng-change="pageChanged()" items-per-page="pageSizeSelected" direction-links="true" max-size="maxSize" class="pagination" boundary-links="true" rotate="false" num-pages="numPages"></ul>
+            </div>
+        </div>
+    </div>-->
+
+    <!-- Modal -->
+    <!--<div class="modal fade" id="modalIngTable" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Lista de Ingenieros</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped table-hover">
+                            <thead class="thead-info">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nombre</th>
+                                    <th>Apellido Paterno</th>
+                                    <th>Apellido Materno</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="i in ingenierosArr">
+                                    <td style="display: none">{{i.id_ingeniero}}</td>
+                                    <td>{{$index + 1}}</td>
+                                    <td>{{i.name}}</td>
+                                    <td>{{i.last_name_p}}</td>
+                                    <td>{{i.last_name_m}}</td>
+                                    <td>
+                                        <div style="float:left;width:35px; cursor: pointer;"><i class="fa fa-trash text-danger" title="Eliminar" data-toggle="tooltip" ng-click="eliminarIngeniero(i)"></i></div>
+                                    </td>
+                                </tr>
+                                <tr class="text-center"  ng-If="ingenierosArr.length == 0">
+                                    <td colspan="5">No hay registros.</td>
+                                </tr>
+                            </tbody>                            
+                        </table>
+                    </div>    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-outline-danger" ng-click="eliminarTodosLosIngenieros()">Borrar todo.</button>
+                </div>
+            </div>
+        </div>
+    </div>-->
+
+</div>
+
+<script src="~/assets/js/Area/Index.js"></script>

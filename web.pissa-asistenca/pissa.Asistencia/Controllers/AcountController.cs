@@ -30,6 +30,7 @@ namespace pissa.Asistencia.Controllers
                 Session["Profile"] = result.id_profile;
                 Session["nombre"] = result.username;
                 Session["pais_reporte"] = result.pais_reporte;
+                Session["Proyecto"] = result.id_proyecto;
                 return RedirectToAction("Index", "Asistencia");
             }
             else
@@ -46,6 +47,8 @@ namespace pissa.Asistencia.Controllers
             Session["departa"] = null;
             Session["Profile"] = null;
             Session["nombre"] = null;
+            Session["pais_reporte"] = null;
+            Session["Proyecto"] = null;
             return RedirectToAction("Index", "Acount");
         }
 

@@ -45,8 +45,8 @@ namespace api.checkin.Controllers
 
         }
 
-        [HttpPut("Update/")]
-        [HttpOptions]
+        [HttpPost("Update/")]
+        //[HttpOptions]
         public async Task<IActionResult> UpdateAsistencia([FromBody] control_asistencia asistencia)
         {
             if (asistencia == null)
@@ -55,15 +55,15 @@ namespace api.checkin.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            await _asistenciaRepository.UpdateAsistencia(asistencia);
+            var res = await _asistenciaRepository.UpdateAsistencia(asistencia);
 
-            return NoContent();
+            return Created("Updated", res);
         }
 
         //[HttpDelete]
         //public async Task<IActionResult> DeleteIngeniero(int id)
         //{
-        //    await _ingenieroRepository.DeleteIngeniero(new Ingeniero { id_ingeniero = id});
+        //    await _ingenieroRepository.DeleteIngeniero(new Ingeniero { id_ingeniero = id});S
 
         //    return NoContent();
         //}

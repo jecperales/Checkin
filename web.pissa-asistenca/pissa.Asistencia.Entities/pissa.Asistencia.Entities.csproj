@@ -52,6 +52,7 @@
     <Compile Include="mi_perfil.cs" />
     <Compile Include="movil.cs" />
     <Compile Include="paginaPersonal.cs" />
+    <Compile Include="perfil.cs" />
     <Compile Include="preRegistro.cs" />
     <Compile Include="privilegios.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

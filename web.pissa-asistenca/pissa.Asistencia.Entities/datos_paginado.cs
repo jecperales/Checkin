@@ -22,5 +22,6 @@ namespace pissa.Asistencia.Entities
         public string marca_telefono { get; set; }
         public string pais { get; set; }
         public int id_perfil { get; set; }
+        public string perfilDesc { get; set; }
     }
 }

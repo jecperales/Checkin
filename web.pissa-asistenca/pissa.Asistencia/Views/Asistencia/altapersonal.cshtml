@@ -3,68 +3,182 @@
 @model tipoProyecto
 @*@model Modelos*@
 
-
-<script src="~/Scripts/jquery-3.3.1.js"></script>
-<script src="~/Scripts/sweetalert.min.js"></script>
-<script src="~/Scripts/angular1_6_1.js"></script>
-<script src="~/Scripts/ui-bootstrap-tpls-3.0.3.min.js"></script>
-
-
 <div class="container-fluid" ng-app="myApp" ng-controller="myCtrl">
-    <div class="row">
-        <div class="col-md-3">
-            <label for="" class="">Nombre</label>
-            <input class="form-control" ng-model="nombre" id="nombre" />
+
+    <div class="row col-12 m-3">
+
+        <div class="row col-12 border-bottom mb-4">
+            <h1>Alta de Ingenieros</h1>
         </div>
-        <div class="col-md-3">
-            <label for="" class="">Apellido paterno</label>
-            <input class="form-control" ng-model="ap_paterno" />
+
+        <div class="row col-12 mb-4">
+            <div class="col-md-3">
+                <label>Nombre</label>
+                <input class="form-control" ng-model="nombre" id="nombre" />
+            </div>
+            <div class="col-md-3">
+                <label>Apellido paterno</label>
+                <input class="form-control" ng-model="ap_paterno" id="apellidoPaterno" />
+            </div>
+            <div class="col-md-3">
+                <label>Apellido materno</label>
+                <input class="form-control" ng-model="ap_materno" id="apellidoMaterno" />
+            </div>
+            <div class="col-md-3">
+                <label>Celular</label>
+                <input class="form-control" maxlength="10" id="celular" ng-model="celular" />
+            </div>
         </div>
-        <div class="col-md-3">
-            <label for="" class="">Apellido materno</label>
-            <input class="form-control" ng-model="ap_materno" />
+
+        <div class="row col-12">
+            <div class="col-md-3">
+                <label>Usuario</label>
+                <input class="form-control" ng-model="usuario" id="usuario" />
+            </div>
+            <div class="col-md-3">
+                <label>Contraseña</label>
+                <input class="form-control" ng-model="psw" id="pwd" />
+            </div>
+            <div class="col-md-2">
+                <label>Perfil</label>
+                <select ng-model="perfilDesc" class="form-control multiSProyecto" ng-options="perf.name for perf in perfilArr" ng-change="onChangePerfil(perf)" id="sPerfil"></select>
+            </div>
+            <div class="col-md-2">
+                <label>Proyecto</label>
+                <select ng-model="selectArea" class="form-control multiSProyecto" ng-options="a.label for a in TArea" id="sProyecto"></select>
+            </div>
+            <div class="col-md-2" style="display:none">
+                <label># Imei</label>
+                <input class="form-control" maxlength="15" ng-model="emei" id="imei" />
+            </div>
+            <div class="col-md-2" style="display:none">
+                <label>Modelo de Telefono</label>
+                <select ng-model="selectTelefono" class="form-control" ng-options="a.label for a in Ttelefono" id="sTelefono"></select>
+            </div>
+
+            <div class="col-md-2">
+                <label>País</label>
+                <select ng-model="selectCountry" class="form-control" ng-options="a.name for a in Tcountry" id="sPais">
+                </select>
+            </div>
         </div>
-        <div class="col-md-2">
-            <label for="" class="">Celular</label>
-            <input class="form-control" maxlength="10" id="celular" ng-model="celular" />
+
+        <div class="row col-12 mt-1">
+            <div class="col-md-3">
+                <br />
+                <button class="btn btn-success w-100" ng-click="limpear()">
+                    <i class="fa fa-trash-o"> Limpiar</i>
+                </button>
+            </div>
+            <div class="col-md-3" ng-if="bool_modifica==false">
+                <br />
+                <button class="btn btn-success w-100" ng-click="registrar()">
+                    <i class="fa fa-save"> Registrar</i>
+                </button>
+            </div>
+            <div class="col-md-3" ng-if="bool_modifica==true">
+                <br />
+                <button class="btn btn-success w-100" ng-click="modificar()">
+                    <i class="fa fa-save"> Modificar</i>
+                </button>
+            </div>
         </div>
+
+        <div class="row col-12 mt-5">
+           
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">                    
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Apellido paterno</th>
+                            <th>Apellido materno</th>
+                            <th>Perfil</th>
+                            <th>Proyecto/Area</th>
+                            <th style="display:none">Emei</th>
+                            <th>País</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="d in Tusuario">
+                            <td>{{d.nombre}}</td>
+                            <td>{{d.appaterno}}</td>
+                            <td>{{d.apmaterno}}</td>
+                            <td>{{d.perfilDesc}}</td>
+                            <td>{{d.area}}</td>
+                            <td style="display:none">{{d.imei}}</td>
+                            <td>{{d.pais}}</td>
+                            <td>
+                                <div style="float: left; width: 35px; cursor: pointer;"><i class="fa fa-user-edit text-primary" title="Editar" ng-click="editar(d)"></i></div>
+                                <div style="float: left; width: 35px; cursor: pointer;"><i class="fa fa-trash-alt text-danger" title="Eliminar" ng-click="eliminarIngeniero(d)"></i></div>
+                            </td>
+                            @*<td style="display: none">{{d.id_mov}}</td>*@
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="text-align: center">
+                    <ul uib-pagination total-items="totalCount" ng-model="pageIndex" ng-change="pageChanged()" items-per-page="pageSizeSelected" direction-links="true" max-size="maxSize" class="pagination" boundary-links="true" rotate="false" num-pages="numPages"></ul>
+                </div>
+            </div>
+        </div>
+
     </div>
-    <br />
-    <div class="row">
-        <div class="col-md-2">
-            <label for="" class="">Usuario</label>
-            <input class="form-control" ng-model="usuario" />
-        </div>
-        <div class="col-md-2">
-            <label for="" class="">Contraseña</label>
-            <input class="form-control" ng-model="psw" />
-        </div>
-        <div class="col-md-2">
-            <label for="" class="">Area</label>
-            @*@Html.DropDownListFor(m => m.id, (List<SelectListItem>)ViewBag.tipo, "Seleccione proyecto", new { @class = "form-control small" })*@
-            <select ng-model="selectArea" class="form-control" ng-options="a.label for a in TArea"></select>
-        </div>
-        <div class="col-md-2" style="display:none">
-            <label for="" class=""># Imei</label>
-            <input class="form-control" maxlength="15" ng-model="emei" />
-        </div>
-        <div class="col-md-2" style="display:none">
-            <label for="" class="">Modelo de Telefono</label>
-            @*@Html.DropDownListFor(m => m.label, (List<SelectListItem>)ViewBag.marcatelefono, "Seleccione telefono", new { @class = "form-control small" })*@
-            <select ng-model="selectTelefono" class="form-control" ng-options="a.label for a in Ttelefono"></select>
-        </div>
 
-        <div class="col-md-2">
-            <label>País</label>
-            <select ng-model="selectCountry" class="form-control" ng-options="a.name for a in Tcountry">
-                @*<option value="" selected disabled>Selecciona un pais</option>*@
-            </select>
+    @*<div class="row ">
+            <div class="col-md-3">
+                <label>Nombre</label>
+                <input class="form-control" ng-model="nombre" id="nombre" />
+            </div>
+            <div class="col-md-3">
+                <label>Apellido paterno</label>
+                <input class="form-control" ng-model="ap_paterno" id="apellidoPaterno" />
+            </div>
+            <div class="col-md-3">
+                <label>Apellido materno</label>
+                <input class="form-control" ng-model="ap_materno" id="apellidoMaterno"/>
+            </div>
+            <div class="col-md-3">
+                <label>Celular</label>
+                <input class="form-control" maxlength="10" id="celular" ng-model="celular" />
+            </div>
         </div>
+        <br />
+        <div class="row">
+            <div class="col-md-2">
+                <label>Usuario</label>
+                <input class="form-control" ng-model="usuario" id="usuario"/>
+            </div>
+            <div class="col-md-2">
+                <label>Contraseña</label>
+                <input class="form-control" ng-model="psw" id="pwd"/>
+            </div>
+            <div class="col-md-2">
+                <label>Perfil</label>
+                    <select ng-model="perfilDesc" class="form-control multiSProyecto" ng-options="perf.name for perf in perfilArr" ng-change="onChangePerfil(perf)" id="sPerfil"></select>
+            </div>
+            <div class="col-md-2">
+                <label>Proyecto</label>
+                <select ng-model="selectArea" class="form-control multiSProyecto" ng-options="a.label for a in TArea" id="sProyecto"></select>
+            </div>
+            <div class="col-md-2" style="display:none">
+                <label># Imei</label>
+                <input class="form-control" maxlength="15" ng-model="emei" id="imei"/>
+            </div>
+            <div class="col-md-2" style="display:none">
+                <label>Modelo de Telefono</label>
+                <select ng-model="selectTelefono" class="form-control" ng-options="a.label for a in Ttelefono" id="sTelefono"></select>
+            </div>
 
+            <div class="col-md-2">
+                <label>País</label>
+                <select ng-model="selectCountry" class="form-control" ng-options="a.name for a in Tcountry" id="sPais">
+                </select>
+            </div>
 
-    </div>
-    <br />
-    <div class="row">
+        </div>*@
+    @*<br />*@
+    @*<div class="row">
         <div class="col-md-2">
             <br />
             <button class="btn btn-success" ng-click="limpear()">
@@ -83,18 +197,19 @@
                 <i class="fa fa-save"> Modificar</i>
             </button>
         </div>
-    </div>
-    <br />
-    <br />
-    <div class="row">
+    </div>*@
+    @*<br />
+    <br />*@
+    <!--<div class="row">
         <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
+            <table class="table table-hover table-striped">
+                <thead class="table-dark">
                     <tr>
                         <th>Nombre</th>
                         <th>Apellido paterno</th>
                         <th>Apellido materno</th>
-                        <th>Celular</th>
+                        <th>Perfil</th>
+                        <th>Proyecto/Area</th>
                         <th style="display:none">Emei</th>
                         <th>País</th>
                         <th>Opciones</th>
@@ -105,57 +220,28 @@
                         <td>{{d.nombre}}</td>
                         <td>{{d.appaterno}}</td>
                         <td>{{d.apmaterno}}</td>
-                        <td>{{d.telefono}}</td>
+                        <td>{{d.perfilDesc}}</td>
+                        <td>{{d.area}}</td>
                         <td style="display:none">{{d.imei}}</td>
                         <td>{{d.pais}}</td>
                         <td>
-                            <div style="float:left;width:35px;"><i class="fa fa-edit" title="Editar" ng-click="editar(d)"></i></div>
-                            <div style="float:left;width:35px;"><i class="fa fa-trash-o" title="Eliminar"></i></div>
-                        </td>
-                        <td style="visibility: hidden">{{d.id_mov}}</td>
-                    </tr>
+                            <div style="float: left; width: 35px; cursor: pointer;"><i class="fa fa-user-edit text-primary" title="Editar" ng-click="editar(d)"></i></div>
+                            <div style="float: left; width: 35px; cursor: pointer;"><i class="fa fa-trash-alt text-danger" title="Eliminar" ng-click="eliminarIngeniero(d)"></i></div>
+                        </td>-->
+                        @*<td style="display: none">{{d.id_mov}}</td>*@
+                    <!--</tr>
                 </tbody>
             </table>
             <div style="text-align: center">
                 <ul uib-pagination total-items="totalCount" ng-model="pageIndex" ng-change="pageChanged()" items-per-page="pageSizeSelected" direction-links="true" max-size="maxSize" class="pagination" boundary-links="true" rotate="false" num-pages="numPages"></ul>
             </div>
         </div>
-    </div>
-    <br />
-    @*<div class="row">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Apellido paterno</th>
-                            <th>Apellido materno</th>
-                            <th>Celular</th>
-                            <th>Emei</th>
-                            <th>Opciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.IndexViewModel.movAsistencia)
-                        {
-                        <tr>
-
-                            <td>@item.nombre</td>
-                            <td>@item.appaterno</td>
-                            <td>@item.apmaterno</td>
-                            <td>@item.celular</td>
-                            <td>@item.imei</td>
-                            <td></td>
-                        </tr>
-                        }
-                    </tbody>
-                </table>
-                @{ Html.RenderPartial("_paginador", Model);}
-            </div>
-        </div>*@
+    </div>-->
+    @*<br />*@
 </div>
 
 <script>
+
     var app = angular.module('myApp', ['ui.bootstrap']);
     app.controller('myCtrl', function ($scope, $http) {
 
@@ -187,6 +273,8 @@
         $scope.Ttelefono = JSON.parse('@Html.Raw(ViewBag.marcatelefono)');
         $scope.Tcountry = JSON.parse('@Html.Raw(ViewBag.country)')
 
+        $scope.perfilArr = [];
+        $scope.perfilDesc="";
 
         $scope.editar = function (d) {
 
@@ -209,6 +297,7 @@
 
             $scope.selectArea = $scope.TArea.find(x => x.label == d.area);
 
+            $scope.perfilDesc = $scope.perfilArr.find(x => x.id_profile == d.id_perfil);
 
         }
 
@@ -226,19 +315,26 @@
             );
         };
 
-
-        $scope.getEmployeeList();
+        $scope.getPerfilList = function () {
+            $http.get("getPerfilList")
+                .then(function (response) {
+                    if (response.data.length > 0) {
+                        $scope.perfilArr = response.data;
+                    }
+                })
+                .catch(function (err) {
+                    swal("Error exception.","Hubo un error al obtener los datos de perfil del servidor. Contacte a su administrador", "error")
+                });
+        }
 
         $scope.pageChanged = function () {
             $scope.getEmployeeList();
         };
 
-
         $scope.changePageSize = function () {
             $scope.pageIndex = 1;
             $scope.getEmployeeList();
         };
-
 
         $scope.modificar = function () {
 
@@ -266,7 +362,7 @@
                     user: $scope.usuario,
                     password: $scope.psw,
                     pais: $scope.selectCountry == undefined ? null : $scope.selectCountry.name,
-                    id_profile: $scope.tperf,
+                    id_profile: $scope.perfilDesc.id_profile,
                     id_proyecto: $scope.selectArea.id
                 };
 
@@ -298,16 +394,16 @@
             if ($scope.validaDatos())
             {
                 $scope.reg = {
-                id_ingeniero: 0,
-                name: $scope.nombre,
-                last_name_p: $scope.ap_paterno,
-                last_name_m: $scope.ap_materno,
-                cell_phone: $scope.celular,
-                user: $scope.usuario,
-                password: $scope.psw,
-                pais: $scope.selectCountry == undefined ? null : $scope.selectCountry.name,
-                id_profile: 2,
-                id_proyecto: $scope.selectArea.id
+                    id_ingeniero: 0,
+                    name: $scope.nombre,
+                    last_name_p: $scope.ap_paterno,
+                    last_name_m: $scope.ap_materno,
+                    cell_phone: $scope.celular,
+                    user: $scope.usuario,
+                    password: $scope.psw,
+                    pais: $scope.selectCountry == undefined ? null : $scope.selectCountry.name,
+                    id_profile: $scope.perfilDesc.id_profile,
+                    id_proyecto: $scope.selectArea.id
                 };
 
                 $scope.tele = {
@@ -320,8 +416,6 @@
                     ing: $scope.reg,
                     mov: $scope.tele
                 }
-
-                console.log($scope.altapersonal);
 
                 var param = JSON.stringify($scope.altapersonal);
                     $http.post('@Url.Action("registra_personal", "Asistencia")', param, { headers: { 'Content-Type': 'application/json' } })
@@ -373,6 +467,12 @@
                 result = false;
             }
 
+            if ($scope.perfilDesc == undefined || $scope.perfilDesc == "")
+            {
+                swal("Datos incompletos", "Debes seleccionar un perfil", "info");
+                result = false;
+            }
+
             return result;
         }
 
@@ -390,9 +490,46 @@
             $scope.selectCountry = '';
             $scope.selectArea = '';
             $scope.selectTelefono = '';
+            $scope.perfilDesc = '';
             document.getElementById('nombre').focus();
 
         }
+
+        $scope.onChangePerfil = function ()
+        {
+            //console.log($scope.perfilDesc);
+        }
+
+        $scope.eliminarIngeniero = function (d)
+        {
+            
+            swal({
+                title: "Esta seguro que desea eliminar a " + d.nombre + " " + d.appaterno + " " + d.apmaterno,
+                text: "Este cambio será permanente y no se podrá revertir.",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+            .then((confirm) => {
+                if (confirm) {
+                    $http.post("eliminarIngeniero?id=" + d.id_ingeniero)
+                        .then(function (response) {
+                            if (response.data) {                                
+                                $scope.getEmployeeList();
+                                $scope.limpear();
+                                swal("El ingeniero fue borrado exitosamente!.", "SUCCESS", "success");
+                            }
+                    })
+                        .catch(function (error) {                            
+                            swal("ERRO", "HUBO UN ERROR AL TRATAR DE ELIMINAR AL INGENIERO, FAAVOR DE COMUNICARSE CON SU ADMINISTRADOR", "error");
+                    });
+                }
+            })
+        }
+
+        $scope.getEmployeeList();
+
+        $scope.getPerfilList();
     });
 
 </script>

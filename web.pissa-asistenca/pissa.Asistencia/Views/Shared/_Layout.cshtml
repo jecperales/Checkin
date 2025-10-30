@@ -5,29 +5,36 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Asistencia</title>
+    <title>Asistencia*</title>
+
     <link href="~/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="~/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="~/css/ruang-admin.min.css" rel="stylesheet">
-   
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <script src="~/Scripts/jquery-3.6.0.min.js"></script>
+    <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/Scripts/sweetalert.min.js"></script>
+    <script src="~/Scripts/angular1_6_1.js"></script>
+    <script src="~/Scripts/ui-bootstrap-tpls-3.0.3.min.js"></script>
+  
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="~/assets/plugins/fullcalendar/js/moment.min.js"></script>
 </head>
 
 <body id="page-top">
+    
     <div id="wrapper">
-        <!-- Sidebar -->
-        <ul class="navbar-nav sidebar sidebar-light accordion" id="accordionSidebar">
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="@Url.Action("Index", "Asistencia")">
-                <div class="sidebar-brand-icon">
-                    @*<img src="img/logo/logo2.png">*@
-                    <img src="~/imagen/logo_pissa_web.png" />
-                </div>
-                <div class="sidebar-brand-text mx-3"></div>
-            </a>
 
-            @{
-                var permiso = ViewBag.profile;
-                if (permiso == 2 || permiso == 3)
-                {
+        <!-- Sidebar -->
+                <ul class="navbar-nav sidebar sidebar-light accordion" id="accordionSidebar">
+                    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="@Url.Action("Index", "Asistencia")">
+                        <div class="sidebar-brand-icon">
+                            @*<img src="img/logo/logo2.png">*@
+                            <img src="~/imagen/logo_pissa_web.png" />
+                        </div>
+                        <div class="sidebar-brand-text mx-3"></div>
+                    </a>
                     <li class="nav-item">
                         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBootstrap"
                            aria-expanded="true" aria-controls="collapseBootstrap">
@@ -36,67 +43,62 @@
                         </a>
                         <div id="collapseBootstrap" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
                             <div class="bg-white py-2 collapse-inner rounded">
-                                <a class="collapse-item" href="@Url.Action("Index", "Asistencia")">H. Asistencia</a>
-                                <a class="collapse-item" href="@Url.Action("chekAsistencia","Asistencia")">R. Asistencia</a>
-                                <a class="collapse-item" href="@Url.Action("Index","Perfil")">Perfil</a>
+                                @{
+                                    var profile = ViewBag.profile;
+
+                                    if (profile == 2 || profile == 3)
+                                    {
+                                        <a class="collapse-item" href="@Url.Action("Index", "Asistencia")">Reporte Asistencia</a>
+                                        <a class="collapse-item" href="@Url.Action("chekAsistencia", "Asistencia")">Registra Asistencia</a>
+                                        <a class="collapse-item" href="@Url.Action("Index", "Perfil")">Perfil</a>
+                                    }
+
+                                    if (profile == 1)
+                                    {
+                                        <a class="collapse-item" href="@Url.Action("Index", "Asistencia")">Reporte Asistencia</a>
+                                        <a class="collapse-item" href="@Url.Action("chekAsistencia","Asistencia")">Registra Asistencia</a>
+                                        <a class="collapse-item" href="@Url.Action("altapersonal","Asistencia")">Alta personal</a>
+                                        <a class="collapse-item" href="@Url.Action("Index","Area")">Areas</a>
+                                        <a class="collapse-item" href="@Url.Action("Charts","Asistencia")">Estadisticas</a>
+                                    }
+
+                                    if (profile == 4)
+                                    {
+                                        <a class="collapse-item" href="@Url.Action("Index", "Asistencia")">Reporte Asistencia</a>
+                                        <a class="collapse-item" href="@Url.Action("Charts","Asistencia")">Estadisticas</a>
+                                    }
+                                }
                             </div>
                         </div>
                     </li>
-                }
-                if (permiso == 1)
-                {
-                    <li class="nav-item">
-                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBootstrap"
-                           aria-expanded="true" aria-controls="collapseBootstrap">
-                            <i class="far fa-fw fa-window-maximize"></i>
-                            <span>Menu</span>
-                        </a>
-                        <div id="collapseBootstrap" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
-                            <div class="bg-white py-2 collapse-inner rounded">
-                                <a class="collapse-item" href="@Url.Action("Index", "Asistencia")">H. Asistencia</a>
-                                <a class="collapse-item" href="@Url.Action("chekAsistencia","Asistencia")">R. Asistencia</a>
-                                <a class="collapse-item" href="@Url.Action("altapersonal","Asistencia")">Alta personal</a>
-                                <a class="collapse-item" href="@Url.Action("Index","Perfil")">Perfil</a>
-                            </div>
-                        </div>
-                    </li>
-                }
-            }
 
+                    <hr class="sidebar-divider">
+                    <div class="version" id="version-ruangadmin"></div>
+                </ul>
+                <!-- Sidebar -->
 
-
-
-            <hr class="sidebar-divider">
-            <div class="version" id="version-ruangadmin"></div>
-        </ul>
-        <!-- Sidebar -->
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
-                <!-- TopBar -->
+                <!-- NAV TopBar -->
                 <nav class="navbar navbar-expand navbar-light bg-navbar topbar mb-4 static-top">
-                    <button id="sidebarToggleTop" class="btn btn-link rounded-circle mr-3">
-                        <i class="fa fa-bars"></i>
-                    </button>
+                    @*<button id="sidebarToggleTop" class="btn btn-link rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+            </button>*@
+
+
                     <ul class="navbar-nav ml-auto">
 
                         <div class="topbar-divider d-none d-sm-block"></div>
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" title="Cerrar sesión"
                                aria-haspopup="true" aria-expanded="false" onclick="salir()">
-                                <img class="img-profile rounded-circle" src="~/imagen/boy.png" style="max-width: 60px"  >
-                                @{
-                                    var nombre = Session["nombre"] == null ? null : Session["nombre"].ToString();
-                                    <span class="ml-2 d-none d-lg-inline text-white small">@nombre</span>
-                                }
+                                <img class="img-profile rounded-circle" src="~/imagen/boy.png" style="max-width: 60px">
+                                @{ var nombre = Session["nombre"] == null ? null : Session["nombre"].ToString();
+                        <span class="ml-2 d-none d-lg-inline text-white small">@nombre</span> }
 
                             </a>
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                @*<a class="dropdown-item" href="#">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Perfil
-                                </a>*@
-                             
-                                <a class="dropdown-item" href="@Url.Action("salir","Acount")" >
+                                <a class="dropdown-item" href="@Url.Action("salir","Acount")">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Cerrar sesion
                                 </a>
@@ -104,14 +106,13 @@
                         </li>
                     </ul>
                 </nav>
-                <!-- Topbar -->
+                <!-- NAV Topbar -->
                 <!-- Container Fluid-->
                 <div class="" id="container-wrapper">
                     @RenderBody()
-
-
                 </div>
                 <!---Container Fluid-->
+
             </div>
             <!-- Footer -->
             <footer class="sticky-footer bg-white">
@@ -128,19 +129,16 @@
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
-    
-    <script src="~/vendor/jquery/jquery.min.js"></script>
-    <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="~/vendor/jquery-easing/jquery.easing.min.js"></script>
-    <script src="~/js/ruang-admin.min.js"></script>
+
     <script>
-        document.getElementById('version-ruangadmin').style.display = 'none';
-        function salir() {
-            
-            window.location = '@Url.Action("salir", "Acount")';
-        }
+            document.getElementById('version-ruangadmin').style.display = 'none';
+            function salir() {
+
+                window.location = '@Url.Action("salir", "Acount")';
+            }
 
     </script>
+
 </body>
 </html>
 

@@ -4,48 +4,13 @@
 @using pissa.Asistencia.Models;
 @model tipoProyecto
 
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-
-
-<script src="~/vendor/jquery/jquery.min.js"></script>
-<script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="~/vendor/jquery-easing/jquery.easing.min.js"></script>
-
-@*<link href="~/vendor/select2/dist/css/select2.min.css" rel="stylesheet" />*@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
-@*<script src="~/js/select2.min.js"></script>*@
-<script src="~/vendor/select2/dist/js/select2.min.js"></script>
-<script src="~/Scripts/sweetalert.min.js"></script>
-
-
-
-
-<style>
-    #id {
-        background-color: rgba(255, 255, 255, 0.2);
-        border: #000000;
-        color: black;
-        width: 130px;
-        height: 34px;
-    }
-
-    #id_ms {
-        /*background: #ff0000;*/
-        background-color: rgba(255, 255, 255, 0.2);
-        border: #000000;
-        color: black;
-        width: 130px;
-        height: 34px;
-    }
-
-    .ultraselect
-    .options {
-        background-color: #5fa7e0;
-    }
-</style>
-
 <div class="container-fluid" id="bloquear" ng-app="myApp" ng-controller="myCtrl">
-    <div class="row">
+    <div class="row m-3">
+
+        <div class="row col-12 border-bottom mb-4">
+            <h1>Reporte de Asistencias</h1>
+        </div>
+
         <div class="col-md-12">
             @{
                 var valor = ViewBag.selectProyecto;
@@ -58,18 +23,18 @@
                     <button class="btn btn-success" onclick="actualizaProy()">
                         <i class="fa fa-save"> Registrar</i>
                     </button>
-                    }
-                    else
-                    { 
-        <div class="row">
-            <div class="col-md-3">
-                <label>Fecha inicio</label>
-                <input type="date" id="fecha1" class="form-control" name="name" value="" />
-            </div>
-            <div class="col-md-3">
-                <label>Fecha fin</label>
-                <input type="date" id="fecha2" class="form-control" name="name" value="" />
-            </div>
+                }
+                else
+                { 
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Fecha inicio</label>
+                            <input type="date" id="fecha1" class="form-control" name="name" value="" />
+                        </div>
+                        <div class="col-md-3">
+                            <label>Fecha fin</label>
+                            <input type="date" id="fecha2" class="form-control" name="name" value="" />
+                        </div>
 
             @{ 
                 var ses2 = int.Parse(Session["Profile"].ToString());
@@ -110,15 +75,17 @@
                     <br />
                     <div class="row">
                         <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
+                            <table class="table table-hover table-striped">
+                               
+                                <thead class="table-dark">
                                     <tr>
                                         <th>Nombre</th>
-                                        <th>Fecha</th>
-                                        <th>Hora de entrada</th>
-                                        <th>Coordenadas de entrada</th>
-                                        <th>Hora de salida</th>
-                                        <th>Coordenadas de salida</th>
+                                        <th>Fecha Entrada</th>
+                                        <th>Hora entrada</th>
+                                        <th>Coordenadas entrada</th>
+                                        <th>Fecha Salida</th>
+                                        <th>Hora salida</th>
+                                        <th>Coordenadas salida</th>
                                         <th>Area</th>
                                         <th>Pais</th>
                                     </tr>
@@ -129,6 +96,7 @@
                                         <td>{{d.fecha_hora_registro}}</td>
                                         <td>{{d.hora_entrada}}</td>
                                         <td><a ng-href="http://maps.google.com/maps?z=12&t=m&q=loc:{{d.latitud}}+{{d.longitud}}" target="external">{{d.latitud}} , {{d.longitud}}</a></td>
+                                        <td>{{d.fecha_hora_salida}}</td>
                                         <td>{{d.hora_salida}}</td>
                                         <td><a ng-if="d.s_latitud != 0" ng-href="http://maps.google.com/maps?z=12&t=m&q=loc:{{d.s_latitud}}+{{d.s_longitud}}" target="external">{{d.s_latitud}} , {{d.s_longitud}}</a></td>
                                         <td>{{d.Area}}</td>
@@ -164,7 +132,7 @@
             //alert('Esta acción está prohibida');
         });
 
-        $('.select2Multiple').select2();
+        //$('.select2Multiple').select2();
         
     })
     
@@ -234,8 +202,7 @@
                 paisReporte: document.getElementById('pais-reporte').value
             }
 
-            var param = JSON.stringify(filtro);
-            console.log(param);
+            var param = JSON.stringify(filtro);            
 
             if (!!filtro.fecha1 == false) {
                 swal("Datos incorrectos", "Debes ingresar una fecha de incio!!!", "warning");
@@ -255,27 +222,8 @@
                 return;
             }
 
-            var url = '@Url.Action("exporta_excel_asistencias", "Asistencia")?fecha1=' + $('#fecha1').val() + '&fecha2=' + $('#fecha2').val() + '&cade=' + cade + '&paisReporte=' + filtro.paisReporte;
-           
-            @*$http.post('@Url.Action("exporta_excel_asistencias", "Asistencia")', param, { headers: { 'Content-Type': 'application/json' } })
-                .then(function (response) {
-                    if (response.data.length > 0) {
-                        $scope.Tasistencia = [];
-                        $scope.Tasistencia = response.data;
-                        swal("Descarga de reporte", "Reporte generado con exito", "success");
-                    }
-                    else
-                    {
-                        swal("Descarga de reporte", "No hay datos para el rango de fecha especificados", "info")
-                    }
-
-                })
-                .catch(function (err) {
-                    swal("Error Exception.", "Ocurrio un error en la aplicacion por favor contacte a su administrador!.", "error")
-                });*@
-
-
-
+            var url = '@Url.Action("exporta_excel_asistencias", "Asistencia")?fecha1=' + $('#fecha1').val() + '&fecha2=' + $('#fecha2').val() + '&proyectos=' + cade + '&paisReporte=' + filtro.paisReporte;
+            
             window.open(url, '_newtab', '');
 
         }
@@ -293,7 +241,6 @@
             }
 
             var param = JSON.stringify(filtro);
-            console.log(param);
 
             if (!!filtro.fecha1 == false)
             {
@@ -319,7 +266,7 @@
             $http.post('@Url.Action("generaAsistencias", "Asistencia")', param, { headers: { 'Content-Type': 'application/json' } })
                 .then(function (response) {
                     if (response.data.length > 0) {
-                        $scope.Tasistencia = [];
+                        $scope.Tasistencia = [];                        
                         $scope.Tasistencia = response.data;
                     }
                     else

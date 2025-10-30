@@ -151,6 +151,8 @@ namespace pissa.Asistencia.Dao
             {
                 if (proyectos > 0)
                 {
+                    fecha2 = fecha2.AddDays(1);
+
                     return (from a in db.control_asistencia
                             join i in db.ingeniero on a.id_ingeniero equals i.id_ingeniero
                             join p in db.proyecto on i.id_proyecto equals p.id
@@ -177,6 +179,8 @@ namespace pissa.Asistencia.Dao
                 }
                 else                
                 {
+                    fecha2 = fecha2.AddDays(1);
+
                     return (from a in db.control_asistencia
                             join i in db.ingeniero on a.id_ingeniero equals i.id_ingeniero
                             join p in db.proyecto on i.id_proyecto equals p.id
@@ -219,6 +223,8 @@ namespace pissa.Asistencia.Dao
 
                 if (proyectos > 0)
                 {
+                    fecha2 = fecha2.AddDays(1);
+
                     return (from a in db.control_asistencia
                             join i in db.ingeniero on a.id_ingeniero equals i.id_ingeniero
                             join p in db.proyecto on i.id_proyecto equals p.id
@@ -249,6 +255,8 @@ namespace pissa.Asistencia.Dao
                 }
                 else                 
                 {
+                    fecha2 = fecha2.AddDays(1);
+
                     return (from a in db.control_asistencia
                             join i in db.ingeniero on a.id_ingeniero equals i.id_ingeniero
                             join p in db.proyecto on i.id_proyecto equals p.id
@@ -285,6 +293,8 @@ namespace pissa.Asistencia.Dao
             int idU = idUser[0];
             using (DataContext db = new DataContext())
             {
+                fecha2 = fecha2.AddDays(1);
+
                 return (from a in db.control_asistencia
                         join i in db.ingeniero on a.id_ingeniero equals i.id_ingeniero
                         join p in db.proyecto on i.id_proyecto equals p.id
@@ -311,15 +321,48 @@ namespace pissa.Asistencia.Dao
             }
         }
 
+        public List<genera_asistencias> GeneraListaAsistenciaCliente(DateTime fecha1, DateTime fecha2, int idProyecto) {
+            fecha2 = fecha2.AddDays(1);
+
+            using (DataContext db = new DataContext()) 
+            {
+                return (from a in db.control_asistencia
+                        join i in db.ingeniero on a.id_ingeniero equals i.id_ingeniero
+                        join p in db.proyecto on i.id_proyecto equals p.id
+                        where
+                            (
+                                a.fecha_hora_registro >= fecha1 && 
+                                a.fecha_hora_registro <= fecha2 &&
+                                p.id == idProyecto
+                            )
+                            select new genera_asistencias {
+                                Nombre = i.name,
+                                last_name_p = i.last_name_p,
+                                last_name_m = i.last_name_m,
+                                pais = i.pais,
+                                Area = p.nombre_proyecto,
+                                fecha_hora_registro = a.fecha_hora_registro.ToString(),
+                                hora_entrada = a.fecha_hora_registro.ToString(),
+                                fecha_hora_salida = a.fecha_hora_salida.ToString(),
+                                latitud = a.latitud,
+                                longitud = a.longitud,
+                                s_latitud = a.s_latitud,
+                                s_longitud = a.s_longitud
+                            })
+                        .ToList();
+            }
+        }
+
         public List<datos_paginado> get_lista_personal(int pageIndex,int pageSize)
         {
             using (DataContext db=new DataContext())
             {
                 if (pageIndex > 0) { pageIndex = pageIndex - 1; }
 
-                return (from i in db.ingeniero
+                return (from i in db.ingeniero where i.status == "1"
                         join m in db.movil on i.id_ingeniero equals m.id_ingeniero
                         join p in db.proyecto on i.id_proyecto equals p.id
+                        join r in db.perfil on i.id_profile equals r.id_profile
                         select new datos_paginado {
                             id_ingeniero=i.id_ingeniero,
                             nombre=i.name,
@@ -333,7 +376,8 @@ namespace pissa.Asistencia.Dao
                             imei=m.no_imei,
                             marca_telefono=m.modelo,
                             pais = i.pais,
-                            id_perfil=i.id_profile
+                            id_perfil=i.id_profile,
+                            perfilDesc = r.name,                           
                         }).ToList().Skip(pageSize * pageIndex).Take(pageSize).ToList();
 
 
@@ -345,7 +389,7 @@ namespace pissa.Asistencia.Dao
         {
             using (DataContext db=new DataContext())
             {
-                return db.ingeniero.Count();
+                return db.ingeniero.Where(i => i.status == "1").Count();
             }
         }
 
@@ -365,14 +409,28 @@ namespace pissa.Asistencia.Dao
             }
         }
 
-        public control_asistencia regasistencias(control_asistencia control)
+        //public control_asistencia regasistencias(control_asistencia control)
+        public string regasistencias(control_asistencia control)
         {
+            string qEntrada = "SELECT * FROM control_asistencia WHERE id_ingeniero IN (" + control.id_ingeniero.ToString() +
+                              ") AND date_format(fecha_hora_registro,'%Y-%m-%d') = date_format('" + 
+                              control.fecha_hora_registro.ToString("yyyy-MM-dd") + "','%Y-%m-%d');";
+
             using (DataContext db=new DataContext())
             {
-                db.control_asistencia.Add(control);
-                db.SaveChanges();
-            }
-            return control;
+                var hayEntrada = db.Database.SqlQuery<control_asistencia>(qEntrada).FirstOrDefault();
+
+                if (hayEntrada != null)
+                {
+                    return hayEntrada.fecha_hora_registro.ToString();
+                }
+                else 
+                {
+                    db.control_asistencia.Add(control);
+                    var res = db.SaveChanges();
+                    return res.ToString();
+                }                
+            }            
         }
 
         public string registraSalida(control_asistencia control)
@@ -406,6 +464,24 @@ namespace pissa.Asistencia.Dao
 
             return result.ToString();
 
+        }
+
+        public int eliminarIngeniero(int id)
+        {
+            var res = 0;
+
+            using (DataContext db = new DataContext())
+            {
+                var ing = db.ingeniero.Where(i => i.id_ingeniero == id && i.status == "1").FirstOrDefault();
+
+                if (ing != null)
+                {
+                    ing.status = "0";
+                    res = db.SaveChanges();
+                }
+
+                return res;
+            }
         }
     }
 }

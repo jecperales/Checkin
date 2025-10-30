@@ -11,8 +11,8 @@ namespace api.checkin.data.Repositories
     {
         Task<IEnumerable<control_asistencia>> GetAllAsistencias();
         Task<control_asistencia> GetAsistencia(DateTime fecha, int id);
-        Task<bool> InsertAsistencia(control_asistencia asistencia);
-        Task<bool> UpdateAsistencia(control_asistencia asistencia);
+        Task<string> InsertAsistencia(control_asistencia asistencia);
+        Task<int> UpdateAsistencia(control_asistencia asistencia);
         Task<bool> DeleteAsistencia(control_asistencia asistencia);
     }
 }

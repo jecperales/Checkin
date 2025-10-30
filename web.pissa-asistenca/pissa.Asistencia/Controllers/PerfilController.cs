@@ -66,7 +66,12 @@ namespace pissa.Asistencia.Controllers
             }
         }
 
+        public ActionResult getPerfilList() 
+        {
+            var res = new Bussines.Perfil().getPerfilList();
 
+            return Json(res, JsonRequestBehavior.AllowGet);
+        }
 
     }
 }
